@@ -42,6 +42,10 @@
             android:name="actividades.ProductosActivity"
             android:label="@string/title_activity_productos" >
         </activity>
+        <activity
+            android:name="actividades.EleccionActivity"
+            android:label="@string/title_activity_eleccion" >
+        </activity>
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" >

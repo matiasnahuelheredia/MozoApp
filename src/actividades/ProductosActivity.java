@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
+
+import representacion.Eleccion;
 import representacion.Mesa;
 import representacion.Pedido;
 import representacion.Producto;
@@ -19,10 +22,13 @@ import com.example.volleytesting.R;
 import com.example.volleytesting.R.id;
 import com.example.volleytesting.R.layout;
 import com.example.volleytesting.R.menu;
+
+import adaptadores.EleccionAdapter;
 import adaptadores.PedidoAdapter;
 import adaptadores.ProductoAdapter;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
@@ -41,6 +47,7 @@ public class ProductosActivity extends Activity {
 	private String usuario;
 	private String password;
 	private String url;
+	private Pedido unPedido;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +58,7 @@ public class ProductosActivity extends Activity {
 		lstView = (ListView) findViewById(R.id.listProductos);
 		lstView.setAdapter(va);
 		mRequestQueue = Volley.newRequestQueue(this);
-		Pedido unPedido = getIntent().getExtras().getParcelable("pedido");
+		unPedido = getIntent().getExtras().getParcelable("pedido");
 		url = unPedido.getUrlDetalle();
 		usuario = getIntent().getExtras().getString("user");
 		password = getIntent().getExtras().getString("password");
@@ -99,10 +106,11 @@ public class ProductosActivity extends Activity {
 	}
 
 	private void parseJSON(JSONObject json) {
+		JSONObject members = null;
 		try {
 
 			// Con esto obtengo result donde en value tengo la lista d mesas
-			JSONObject members = json.getJSONObject("members");
+			members = json.getJSONObject("members");
 			// Con esto obtengo los title de las mesas
 			JSONObject productosComanda = members
 					.getJSONObject("productosComanda");
@@ -114,7 +122,7 @@ public class ProductosActivity extends Activity {
 				unProducto.setUrlDetalle(producto.optString("href"));
 				arrNews.add(unProducto);
 			}
-			
+
 			JSONObject bebidasDelPedido = members.getJSONObject("bebidas");
 			JSONArray valueBebidas = bebidasDelPedido.getJSONArray("value");
 			for (int i = 0; i < valueBebidas.length(); i++) {
@@ -124,7 +132,7 @@ public class ProductosActivity extends Activity {
 				unProducto.setUrlDetalle(producto.optString("href"));
 				arrNews.add(unProducto);
 			}
-			
+
 			JSONObject menuesComanda = members.getJSONObject("menuesComanda");
 			JSONArray valueMenues = menuesComanda.getJSONArray("value");
 			for (int i = 0; i < valueMenues.length(); i++) {
@@ -134,12 +142,37 @@ public class ProductosActivity extends Activity {
 				unProducto.setUrlDetalle(producto.optString("href"));
 				arrNews.add(unProducto);
 			}
-			
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
+		unPedido.setUrlPedirBebidas(setearURL("pedirBebidas", members));
+		unPedido.setUrlRemoveFromBebidas(setearURL("removeFromBebidas", members));
+		unPedido.setUrlEnviar(setearURL("enviar", members));
+		unPedido.setUrlTomarMenues(setearURL("tomarMenues", members));
+		unPedido.setUrlRemoveFromMenues(setearURL("removeFromMenues", members));
+		unPedido.setUrlPedirPlatosEntrada(setearURL("pedirPlatosEntrada",
+				members));
+		unPedido.setUrlPedirPlatosPrincipales(setearURL(
+				"pedirPlatosPrincipales", members));
+		unPedido.setUrlPedirGuarniciones(setearURL("pedirGuarniciones", members));
+		unPedido.setUrlPedirPostres(setearURL("pedirPostres", members));
+		unPedido.setUrlRemoveFromComanda(setearURL("removeFromComanda", members));
+	}
+
+	private String setearURL(String accion, JSONObject unJSONObject) {
+
+		try {
+			JSONObject accionDo = unJSONObject.getJSONObject(accion);
+			JSONArray linkDo = accionDo.getJSONArray("links");
+			JSONObject arregloDo = linkDo.getJSONObject(0);
+			return arregloDo.optString("href");
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	@Override
@@ -153,6 +186,35 @@ public class ProductosActivity extends Activity {
 		int id = item.getItemId();
 		if (id == R.id.action_settings) {
 			return true;
+		}
+
+		if (id == R.id.bebidas) {
+
+			url = unPedido.getUrlPedirBebidas();
+			Bundle bundle = new Bundle();
+			bundle.putString("url", url);
+			bundle.putString("user", usuario);
+			bundle.putString("password", password);
+			Intent intent = new Intent(ProductosActivity.this,
+					EleccionActivity.class);
+			intent.putExtras(bundle);
+			startActivity(intent);			
+
+			return true;
+		}
+		if (id == R.id.menues) {
+			url = unPedido.getUrlTomarMenues();
+			Bundle bundle = new Bundle();
+			bundle.putString("url", url);
+			bundle.putString("user", usuario);
+			bundle.putString("password", password);
+			Intent intent = new Intent(ProductosActivity.this,
+					EleccionActivity.class);
+			intent.putExtras(bundle);
+			startActivity(intent);
+
+			return true;
+
 		}
 		return super.onOptionsItemSelected(item);
 	}

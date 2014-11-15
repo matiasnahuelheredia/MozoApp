@@ -46,6 +46,8 @@ public class PedidosActivity extends Activity {
 	private String usuario;
 	private String password;
 	private String url;
+	private String urlInvoke;
+	private Mesa unaMesa;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +58,7 @@ public class PedidosActivity extends Activity {
 		lstView = (ListView) findViewById(R.id.listPedidos);
 		lstView.setAdapter(va);
 		mRequestQueue = Volley.newRequestQueue(this);
-		Mesa unaMesa = getIntent().getExtras().getParcelable("mesa");
+		unaMesa = getIntent().getExtras().getParcelable("mesa");
 		url = unaMesa.getUrlDetalle();
 		usuario = getIntent().getExtras().getString("user");
 		password = getIntent().getExtras().getString("password");
@@ -153,6 +155,10 @@ public class PedidosActivity extends Activity {
 
 		int id = item.getItemId();
 		if (id == R.id.action_settings) {
+			return true;
+		}
+		
+		if (id == R.id.pedido) {
 			return true;
 		}
 		return super.onOptionsItemSelected(item);

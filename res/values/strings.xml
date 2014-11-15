@@ -9,5 +9,9 @@
     <string name="title_activity_auxiliar">Auxiliar</string>
     <string name="title_activity_mesa">Mesas</string>
     <string name="title_activity_productos">Productos</string>
+    <string name="menu_productos_bebidas">Bebidas</string>
+    <string name="menu_productos_menues">Menues</string>
+    <string name="menu_pedidos_tomarPedido">Pedido</string>
+    <string name="title_activity_eleccion">Eleccion</string>
 
 </resources>

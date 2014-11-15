@@ -4,6 +4,9 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class Mesa implements Parcelable {
+	
+	private String title;
+	private String urlDetalle;
 
 	public Mesa() {
 
@@ -26,8 +29,7 @@ public class Mesa implements Parcelable {
 		}
 	};
 
-	private String title;
-	private String urlDetalle;
+	
 
 	public String getTitle() {
 		return title;
