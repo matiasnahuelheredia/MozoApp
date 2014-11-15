@@ -106,14 +106,36 @@ public class ProductosActivity extends Activity {
 			// Con esto obtengo los title de las mesas
 			JSONObject productosComanda = members
 					.getJSONObject("productosComanda");
-			JSONArray value = productosComanda.getJSONArray("value");
-			for (int i = 0; i < value.length(); i++) {
-				JSONObject producto = value.getJSONObject(i);
+			JSONArray valueProductos = productosComanda.getJSONArray("value");
+			for (int i = 0; i < valueProductos.length(); i++) {
+				JSONObject producto = valueProductos.getJSONObject(i);
 				Producto unProducto = new Producto();
 				unProducto.setTitle(producto.optString("title"));
 				unProducto.setUrlDetalle(producto.optString("href"));
 				arrNews.add(unProducto);
 			}
+			
+			JSONObject bebidasDelPedido = members.getJSONObject("bebidas");
+			JSONArray valueBebidas = bebidasDelPedido.getJSONArray("value");
+			for (int i = 0; i < valueBebidas.length(); i++) {
+				JSONObject producto = valueBebidas.getJSONObject(i);
+				Producto unProducto = new Producto();
+				unProducto.setTitle(producto.optString("title"));
+				unProducto.setUrlDetalle(producto.optString("href"));
+				arrNews.add(unProducto);
+			}
+			
+			JSONObject menuesComanda = members.getJSONObject("menuesComanda");
+			JSONArray valueMenues = menuesComanda.getJSONArray("value");
+			for (int i = 0; i < valueMenues.length(); i++) {
+				JSONObject producto = valueMenues.getJSONObject(i);
+				Producto unProducto = new Producto();
+				unProducto.setTitle(producto.optString("title"));
+				unProducto.setUrlDetalle(producto.optString("href"));
+				arrNews.add(unProducto);
+			}
+			
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
