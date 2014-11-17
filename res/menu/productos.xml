@@ -15,9 +15,33 @@
         android:title="@string/menu_productos_bebidas"/>
     
     <item
+        android:id="@+id/principal"
+        android:orderInCategory="100"
+        android:showAsAction="ifRoom"
+        android:title="@string/menu_productos_principal"/>
+    
+    <item
+        android:id="@+id/entrada"
+        android:orderInCategory="100"
+        android:showAsAction="ifRoom"
+        android:title="@string/menu_productos_entrada"/>
+    <item
+        android:id="@+id/postre"
+        android:orderInCategory="100"
+        android:showAsAction="ifRoom"
+        android:title="@string/menu_productos_postre"/>
+    
+    <item
+        android:id="@+id/guarnicion"
+        android:orderInCategory="100"
+        android:showAsAction="ifRoom"
+        android:title="@string/menu_productos_guarnicion"/>
+    
+    <item
         android:id="@+id/menues"
         android:orderInCategory="100"
         android:showAsAction="ifRoom"
         android:title="@string/menu_productos_menues"/>
+    
 
 </menu>

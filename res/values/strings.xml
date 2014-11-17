@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">volleyTesting</string>
+    <string name="app_name">Cliente Mozo</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="title_activity_pedidos">Pedidos</string>
@@ -10,8 +10,13 @@
     <string name="title_activity_mesa">Mesas</string>
     <string name="title_activity_productos">Productos</string>
     <string name="menu_productos_bebidas">Bebidas</string>
+    <string name="menu_productos_entrada">Entrada</string>
+    <string name="menu_productos_principal">Principal</string>
+    <string name="menu_productos_postre">Postre</string>
+    <string name="menu_productos_guarnicion">Guarnicion</string>
     <string name="menu_productos_menues">Menues</string>
     <string name="menu_pedidos_tomarPedido">Pedido</string>
+    <string name="menu_mesa_Pedido">Pedido</string>
     <string name="title_activity_eleccion">Eleccion</string>
 
 </resources>

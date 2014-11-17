@@ -17,12 +17,10 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.volleytesting.R;
 import adaptadores.EleccionAdapter;
-import adaptadores.ProductoAdapter;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -49,6 +47,8 @@ public class EleccionActivity extends Activity {
 	private EleccionAdapter eleccionAdapter;
 	private String urlInvoke;
 	private String tipo;
+	private Producto unProducto;
+	private String urlPedido;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -113,12 +113,19 @@ public class EleccionActivity extends Activity {
 				Eleccion unaEleccion = (Eleccion) parent.getAdapter().getItem(
 						position);
 				JSONObject postItem = itemToAdd(unaEleccion.getUrl());
+				unProducto = new Producto();
+				unProducto.setTitle(unaEleccion.getTitle());
+				unProducto.setUrlDetalle(unaEleccion.getUrl());
 				JsonObjectRequest jsonPost = new JsonObjectRequest(Request.Method.POST, urlInvoke, postItem, 
 						new Response.Listener<JSONObject>() {
 
 					@Override
 					public void onResponse(JSONObject response) {
 						// TODO Auto-generated method stub
+						System.out.println("Entrooo");
+						
+						
+						
 						
 					}
 				}, new Response.ErrorListener() {
@@ -149,11 +156,18 @@ public class EleccionActivity extends Activity {
 					}
 					
 				};
-			mRequestQueue.add(jsonPost);
-			finish();			
+			mRequestQueue.add(jsonPost);			
+			Intent intentRegreso = new Intent();
+			intentRegreso.putExtra("productoNew", unProducto);
+			intentRegreso.putExtra("urlPedido", urlPedido);
+			setResult(RESULT_OK, intentRegreso);
+			finish();
 			}
-		});
+						
+		});		
+		
 	}
+	
 
 	private JSONObject itemToAdd(String unaURL) {
 
@@ -174,6 +188,7 @@ public class EleccionActivity extends Activity {
 
 		return item;
 	}
+
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -240,4 +255,6 @@ public class EleccionActivity extends Activity {
 			e.printStackTrace();
 		}
 	}
+
+	
 }

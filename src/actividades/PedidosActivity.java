@@ -159,6 +159,7 @@ public class PedidosActivity extends Activity {
 		}
 		
 		if (id == R.id.pedido) {
+			
 			return true;
 		}
 		return super.onOptionsItemSelected(item);

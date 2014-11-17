@@ -36,6 +36,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
+import android.widget.Toast;
 
 public class MesaActivity extends Activity {
 
@@ -155,4 +156,14 @@ public class MesaActivity extends Activity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
+
+	@Override
+	protected void onDestroy() {
+		// TODO Auto-generated method stub
+		
+		Toast.makeText(getApplicationContext(), "Esta Saliendo de la APP", Toast.LENGTH_LONG).show();		
+		super.onDestroy();
+	}
+	
+	
 }

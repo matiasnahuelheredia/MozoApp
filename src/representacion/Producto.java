@@ -30,6 +30,8 @@ public class Producto implements Parcelable {
 			return new Producto[size];
 		}
 	};
+	
+	
 
 	@Override
 	public int describeContents() {
@@ -40,6 +42,10 @@ public class Producto implements Parcelable {
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
 		// TODO Auto-generated method stub
+		dest.writeString(title);
+		dest.writeInt(cantidad);
+		dest.writeString(urlDetalle);
+		
 
 	}
 

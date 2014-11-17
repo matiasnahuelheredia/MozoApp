@@ -26,6 +26,7 @@ import com.example.volleytesting.R.menu;
 import adaptadores.EleccionAdapter;
 import adaptadores.PedidoAdapter;
 import adaptadores.ProductoAdapter;
+import android.R.string;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -47,7 +48,7 @@ public class ProductosActivity extends Activity {
 	private String usuario;
 	private String password;
 	private String url;
-	private Pedido unPedido;
+	private Pedido unPedido;	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -103,6 +104,10 @@ public class ProductosActivity extends Activity {
 		};
 		mRequestQueue.add(jr);
 
+	}
+	
+	private void cargarLista(){
+		
 	}
 
 	private void parseJSON(JSONObject json) {
@@ -198,7 +203,7 @@ public class ProductosActivity extends Activity {
 			Intent intent = new Intent(ProductosActivity.this,
 					EleccionActivity.class);
 			intent.putExtras(bundle);
-			startActivity(intent);			
+			startActivityForResult(intent,0);			
 
 			return true;
 		}
@@ -211,11 +216,93 @@ public class ProductosActivity extends Activity {
 			Intent intent = new Intent(ProductosActivity.this,
 					EleccionActivity.class);
 			intent.putExtras(bundle);
-			startActivity(intent);
+			startActivityForResult(intent,0);
+
+			return true;
+
+		}
+		
+		if (id == R.id.entrada) {
+			url = unPedido.getUrlPedirPlatosEntrada();
+			Bundle bundle = new Bundle();
+			bundle.putString("url", url);
+			bundle.putString("user", usuario);
+			bundle.putString("password", password);
+			Intent intent = new Intent(ProductosActivity.this,
+					EleccionActivity.class);
+			intent.putExtras(bundle);
+			startActivityForResult(intent,0);
+
+			return true;
+
+		}
+		if (id == R.id.principal) {
+			url = unPedido.getUrlPedirPlatosPrincipales();
+			Bundle bundle = new Bundle();
+			bundle.putString("url", url);
+			bundle.putString("user", usuario);
+			bundle.putString("password", password);
+			Intent intent = new Intent(ProductosActivity.this,
+					EleccionActivity.class);
+			intent.putExtras(bundle);
+			startActivityForResult(intent,0);
+
+			return true;
+
+		}
+		
+		if (id == R.id.guarnicion) {
+			url = unPedido.getUrlPedirGuarniciones();
+			Bundle bundle = new Bundle();
+			bundle.putString("url", url);
+			bundle.putString("user", usuario);
+			bundle.putString("password", password);
+			Intent intent = new Intent(ProductosActivity.this,
+					EleccionActivity.class);
+			intent.putExtras(bundle);
+			startActivityForResult(intent,0);
+
+			return true;
+
+		}
+		
+		if (id == R.id.postre) {
+			url = unPedido.getUrlPedirPostres();
+			Bundle bundle = new Bundle();
+			bundle.putString("url", url);
+			bundle.putString("user", usuario);
+			bundle.putString("password", password);
+			Intent intent = new Intent(ProductosActivity.this,
+					EleccionActivity.class);
+			intent.putExtras(bundle);
+			startActivityForResult(intent,0);
 
 			return true;
 
 		}
 		return super.onOptionsItemSelected(item);
 	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		// TODO Auto-generated method stub				
+		 switch(requestCode) { 
+		    case (0) : { 
+		      if (resultCode == Activity.RESULT_OK) {		    	  
+		        
+		    	  Producto unProducto = new Producto();		    	  
+		    	  unProducto  = data.getExtras().getParcelable("productoNew");
+		    	  String temp = data.getExtras().getString("urlPedido");
+//		    	  urlUpdate = data.getExtras().getString("");
+//		    	  arrNews.add(unProducto);
+//		    	  va.notifyDataSetChanged();
+		    	  		    	  
+		    	 
+		      } 
+		      break; 
+		    } 
+		  }
+		 super.onActivityResult(requestCode, resultCode, data);
+	}
+	
 }

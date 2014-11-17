@@ -65,7 +65,7 @@ public class Login extends Activity {
 				parametros.putString("url", url);
 				parametros.putString("user", usuario);
 				parametros.putString("password", password);
-				Intent intent = new Intent(getApplicationContext(),
+				Intent intent = new Intent(Login.this,
 						MesaActivity.class);
 				intent.putExtras(parametros);
 				startActivity(intent);
