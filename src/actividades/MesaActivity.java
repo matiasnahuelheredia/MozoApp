@@ -1,8 +1,11 @@
 package actividades;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+
+import networking.Conexion;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -40,67 +43,19 @@ import android.widget.Toast;
 
 public class MesaActivity extends Activity {
 
-	private String TAG = this.getClass().getSimpleName();
 	private ListView lstView;
-	private RequestQueue mRequestQueue;
-	private ArrayList<Mesa> arrNews;
-	private MesaAdapter va;
-	private ProgressDialog pd;
-	private String usuario;
-	private String password;
-	private String url;
+	private ArrayList<Mesa> arregloMesas;
+	private MesaAdapter adaptadorMesas;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_mesa);
-		arrNews = new ArrayList<Mesa>();
-		va = new MesaAdapter(getApplicationContext(), arrNews);
+		arregloMesas = getIntent().getExtras().getParcelableArrayList(
+				"listaDeMesas");
+		adaptadorMesas = new MesaAdapter(getApplicationContext(), arregloMesas);
 		lstView = (ListView) findViewById(R.id.lista_mesas);
-		lstView.setAdapter(va);
-		mRequestQueue = Volley.newRequestQueue(this);
-		url = getIntent().getExtras().getString("url");
-		usuario = getIntent().getExtras().getString("user");
-		password = getIntent().getExtras().getString("password");
-		pd = ProgressDialog.show(this, "Aguarde por favor...",
-				"Aguarde por favor...");
-		JsonObjectRequest jr = new JsonObjectRequest(Request.Method.GET, url,
-				null, new Response.Listener<JSONObject>() {
-					@Override
-					public void onResponse(JSONObject response) {
-						Log.i(TAG, response.toString());
-						parseJSON(response);
-						va.notifyDataSetChanged();
-						pd.dismiss();
-						;
-					}
-				}, new Response.ErrorListener() {
-					@Override
-					public void onErrorResponse(VolleyError error) {
-						Log.i(TAG, error.getMessage());
-					}
-				}) {
-
-			@Override
-			public Map<String, String> getHeaders() throws AuthFailureError {
-				// TODO Auto-generated method stub
-				return createBasicAuthHeader(usuario, password);
-			}
-
-			Map<String, String> createBasicAuthHeader(String username,
-					String password) {
-				Map<String, String> headerMap = new HashMap<String, String>();
-
-				String credentials = username + ":" + password;
-				String encodedCredentials = Base64.encodeToString(
-						credentials.getBytes(), Base64.NO_WRAP);
-				headerMap.put("Authorization", "Basic " + encodedCredentials);
-
-				return headerMap;
-			}
-
-		};
-		mRequestQueue.add(jr);
+		lstView.setAdapter(adaptadorMesas);
 		lstView.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
@@ -110,8 +65,6 @@ public class MesaActivity extends Activity {
 				Mesa unaMesa = (Mesa) parent.getAdapter().getItem(position);
 				Bundle bundle = new Bundle();
 				bundle.putParcelable("mesa", unaMesa);
-				bundle.putString("user", usuario);
-				bundle.putString("password", password);
 				Intent intent = new Intent(MesaActivity.this,
 						PedidosActivity.class);
 				intent.putExtras(bundle);
@@ -119,24 +72,6 @@ public class MesaActivity extends Activity {
 
 			}
 		});
-	}
-
-	private void parseJSON(JSONObject json) {
-		try {
-
-			JSONObject result = json.getJSONObject("result");
-			JSONArray value = result.getJSONArray("value");
-			for (int i = 0; i < value.length(); i++) {
-				JSONObject mesa = value.getJSONObject(i);
-				Mesa unaMesa = new Mesa();
-				unaMesa.setTitle(mesa.optString("title"));
-				unaMesa.setUrlDetalle(mesa.optString("href"));
-				arrNews.add(unaMesa);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
 	}
 
 	@Override
@@ -160,10 +95,10 @@ public class MesaActivity extends Activity {
 	@Override
 	protected void onDestroy() {
 		// TODO Auto-generated method stub
-		
-		Toast.makeText(getApplicationContext(), "Esta Saliendo de la APP", Toast.LENGTH_LONG).show();		
+
+		Toast.makeText(getApplicationContext(), "Esta Saliendo de la APP",
+				Toast.LENGTH_LONG).show();
 		super.onDestroy();
 	}
-	
-	
+
 }
