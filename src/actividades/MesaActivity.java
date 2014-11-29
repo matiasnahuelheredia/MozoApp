@@ -1,38 +1,24 @@
 package actividades;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
-
-import networking.Conexion;
-
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
-
-import representacion.Mesa;
-
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
 import com.example.volleytesting.R;
-import com.example.volleytesting.R.id;
-import com.example.volleytesting.R.layout;
-import com.example.volleytesting.R.menu;
-
+import networking.Conexion;
+import representacion.Mesa;
+import representacion.Pedido;
 import adaptadores.MesaAdapter;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.hardware.Camera.Area;
 import android.os.Bundle;
-import android.util.Base64;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -45,6 +31,7 @@ public class MesaActivity extends Activity {
 
 	private ListView lstView;
 	private ArrayList<Mesa> arregloMesas;
+	private ArrayList<Pedido> arregloPedidos;
 	private MesaAdapter adaptadorMesas;
 
 	@Override
@@ -53,9 +40,12 @@ public class MesaActivity extends Activity {
 		setContentView(R.layout.activity_mesa);
 		arregloMesas = getIntent().getExtras().getParcelableArrayList(
 				"listaDeMesas");
+		arregloPedidos = new ArrayList<Pedido>();
 		adaptadorMesas = new MesaAdapter(getApplicationContext(), arregloMesas);
 		lstView = (ListView) findViewById(R.id.lista_mesas);
 		lstView.setAdapter(adaptadorMesas);
+		final RequestQueue colaSolicitud = Conexion.getInstance(
+				getApplicationContext()).getRequestQueue();
 		lstView.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
@@ -63,12 +53,48 @@ public class MesaActivity extends Activity {
 					int position, long id) {
 				// TODO Auto-generated method stub
 				Mesa unaMesa = (Mesa) parent.getAdapter().getItem(position);
-				Bundle bundle = new Bundle();
-				bundle.putParcelable("mesa", unaMesa);
-				Intent intent = new Intent(MesaActivity.this,
-						PedidosActivity.class);
-				intent.putExtras(bundle);
-				startActivity(intent);
+				final ProgressDialog pd = ProgressDialog.show(
+						MesaActivity.this, "Aguarde por favor...",
+						"Aguarde por favor...");
+				JsonObjectRequest solicitudPedidos = new JsonObjectRequest(
+						Request.Method.GET, unaMesa.getUrlDetalle(), null,
+						new Response.Listener<JSONObject>() {
+
+							@Override
+							public void onResponse(JSONObject response) {
+								// TODO Auto-generated method stub
+								System.out.println("Entroooooooo");
+								parseJSON(response);
+								Bundle bundle = new Bundle();
+								bundle.putParcelableArrayList("listaPedidos",
+										arregloPedidos);
+								Intent intent = new Intent(MesaActivity.this,
+										PedidosActivity.class);
+								intent.putExtras(bundle);
+								startActivity(intent);
+								pd.dismiss();
+
+							}
+						}, new Response.ErrorListener() {
+
+							@Override
+							public void onErrorResponse(VolleyError error) {
+								// TODO Auto-generated method stub
+								System.out.println("Noooo Entroooooooo");
+								pd.dismiss();
+
+							}
+						}) {
+
+					@Override
+					public Map<String, String> getHeaders()
+							throws AuthFailureError {
+						// TODO Auto-generated method stub
+						return Conexion.createBasicAuthHeader();
+					}
+
+				};
+				colaSolicitud.add(solicitudPedidos);
 
 			}
 		});
@@ -99,6 +125,25 @@ public class MesaActivity extends Activity {
 		Toast.makeText(getApplicationContext(), "Esta Saliendo de la APP",
 				Toast.LENGTH_LONG).show();
 		super.onDestroy();
+	}
+
+	private void parseJSON(JSONObject json) {
+		try {
+
+			JSONObject members = json.getJSONObject("members");
+			JSONObject pedidos = members.getJSONObject("pedidos");
+			JSONArray value = pedidos.getJSONArray("value");
+			for (int i = 0; i < value.length(); i++) {
+				JSONObject pedido = value.getJSONObject(i);
+				Pedido unPedido = new Pedido();
+				unPedido.setTitle(pedido.optString("title"));
+				unPedido.setUrlDetalle(pedido.optString("href"));
+				arregloPedidos.add(unPedido);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 	}
 
 }

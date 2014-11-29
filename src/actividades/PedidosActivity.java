@@ -3,11 +3,16 @@ package actividades;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import networking.Conexion;
+
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import representacion.Mesa;
 import representacion.Pedido;
+import representacion.Producto;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -36,84 +41,62 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
 public class PedidosActivity extends Activity {
-
-	private String TAG = this.getClass().getSimpleName();
+	
 	private ListView lstView;
-	private RequestQueue mRequestQueue;
-	private ArrayList<Pedido> arrNews;
-	private PedidoAdapter va;
+	private ArrayList<Pedido> arregloPedidos;
+	private ArrayList<Producto> arregloProductos;
+	private PedidoAdapter adaptadorPedidos;
 	private ProgressDialog pd;
-	private String usuario;
-	private String password;
-	private String url;
-	private String urlInvoke;
-	private Mesa unaMesa;
-
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_pedidos);
-		arrNews = new ArrayList<Pedido>();
-		va = new PedidoAdapter(getApplicationContext(), arrNews);
+		final RequestQueue colaSolicitud = Conexion.getInstance(
+				getApplicationContext()).getRequestQueue();
+		arregloPedidos = new ArrayList<Pedido>();
+		arregloPedidos = getIntent().getExtras().getParcelableArrayList(
+				"listaPedidos");
+		adaptadorPedidos = new PedidoAdapter(getApplicationContext(),
+				arregloPedidos);
 		lstView = (ListView) findViewById(R.id.listPedidos);
-		lstView.setAdapter(va);
-		mRequestQueue = Volley.newRequestQueue(this);
-		unaMesa = getIntent().getExtras().getParcelable("mesa");
-		url = unaMesa.getUrlDetalle();
-		usuario = getIntent().getExtras().getString("user");
-		password = getIntent().getExtras().getString("password");
-		pd = ProgressDialog.show(this, "Aguarde por favor...",
-				"Aguarde por favor...");
-		JsonObjectRequest jr = new JsonObjectRequest(Request.Method.GET, url,
-				null, new Response.Listener<JSONObject>() {
-					@Override
-					public void onResponse(JSONObject response) {
-						System.out.println("Entroooooooooooooo");
-						Log.i(TAG, response.toString());
-						parseJSON(response);
-						va.notifyDataSetChanged();
-						pd.dismiss();
-						;
-					}
-				}, new Response.ErrorListener() {
-					@Override
-					public void onErrorResponse(VolleyError error) {
-						Log.i(TAG, error.getMessage());
-						System.out.println("Nooooooo Entroooooooooooooo");
-					}
-				}) {
-
-			@Override
-			public Map<String, String> getHeaders() throws AuthFailureError {
-				// TODO Auto-generated method stub
-				return createBasicAuthHeader(usuario, password);
-			}
-
-			Map<String, String> createBasicAuthHeader(String username,
-					String password) {
-				Map<String, String> headerMap = new HashMap<String, String>();
-
-				String credentials = username + ":" + password;
-				String encodedCredentials = Base64.encodeToString(
-						credentials.getBytes(), Base64.NO_WRAP);
-				headerMap.put("Authorization", "Basic " + encodedCredentials);
-				return headerMap;
-			}
-
-		};
-		mRequestQueue.add(jr);
+		lstView.setAdapter(adaptadorPedidos);
 		lstView.setOnItemClickListener(new OnItemClickListener() {
-
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				// TODO Auto-generated method stub
 				Pedido unPedido = (Pedido) parent.getAdapter()
 						.getItem(position);
+				final ProgressDialog pd = ProgressDialog.show(
+						PedidosActivity.this, "Aguarde por favor...",
+						"Aguarde por favor...");
+				JsonObjectRequest solicitudProductos = new JsonObjectRequest(Request.Method.GET, unPedido.getUrlDetalle(), null, 
+						new Response.Listener<JSONObject>() {
+
+							@Override
+							public void onResponse(JSONObject response) {
+								// TODO Auto-generated method stub
+								
+								
+							}
+				}, new Response.ErrorListener() {
+
+					@Override
+					public void onErrorResponse(VolleyError error) {
+						// TODO Auto-generated method stub
+						
+					}
+				}){
+
+					@Override
+					public Map<String, String> getHeaders()
+							throws AuthFailureError {
+						// TODO Auto-generated method stub
+						return Conexion.createBasicAuthHeader();
+					}};
 				Bundle bundle = new Bundle();
-				bundle.putParcelable("pedido", unPedido);
-				bundle.putString("user", usuario);
-				bundle.putString("password", password);
+				bundle.putParcelable("pedido", unPedido);				
 				Intent intent = new Intent(PedidosActivity.this,
 						ProductosActivity.class);
 				intent.putExtras(bundle);
@@ -123,24 +106,75 @@ public class PedidosActivity extends Activity {
 		});
 
 	}
-
+	
 	private void parseJSON(JSONObject json) {
+		JSONObject members = null;
 		try {
 
-			JSONObject members = json.getJSONObject("members");
-			JSONObject pedidos = members.getJSONObject("pedidos");
-			JSONArray value = pedidos.getJSONArray("value");
-			for (int i = 0; i < value.length(); i++) {
-				JSONObject pedido = value.getJSONObject(i);
-				Pedido unPedido = new Pedido();
-				unPedido.setTitle(pedido.optString("title"));
-				unPedido.setUrlDetalle(pedido.optString("href"));
-				arrNews.add(unPedido);
+			// Con esto obtengo result donde en value tengo la lista d mesas
+			members = json.getJSONObject("members");
+			// Con esto obtengo los title de las mesas
+			JSONObject productosComanda = members
+					.getJSONObject("productosComanda");
+			JSONArray valueProductos = productosComanda.getJSONArray("value");
+			for (int i = 0; i < valueProductos.length(); i++) {
+				JSONObject producto = valueProductos.getJSONObject(i);
+				Producto unProducto = new Producto();
+				unProducto.setTitle(producto.optString("title"));
+				unProducto.setUrlDetalle(producto.optString("href"));
+				arregloProductos.add(unProducto);
 			}
+
+			JSONObject bebidasDelPedido = members.getJSONObject("bebidas");
+			JSONArray valueBebidas = bebidasDelPedido.getJSONArray("value");
+			for (int i = 0; i < valueBebidas.length(); i++) {
+				JSONObject producto = valueBebidas.getJSONObject(i);
+				Producto unProducto = new Producto();
+				unProducto.setTitle(producto.optString("title"));
+				unProducto.setUrlDetalle(producto.optString("href"));
+				arregloProductos.add(unProducto);
+			}
+
+			JSONObject menuesComanda = members.getJSONObject("menuesComanda");
+			JSONArray valueMenues = menuesComanda.getJSONArray("value");
+			for (int i = 0; i < valueMenues.length(); i++) {
+				JSONObject producto = valueMenues.getJSONObject(i);
+				Producto unProducto = new Producto();
+				unProducto.setTitle(producto.optString("title"));
+				unProducto.setUrlDetalle(producto.optString("href"));
+				arregloProductos.add(unProducto);
+			}
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
+		unPedido.setUrlPedirBebidas(setearURL("pedirBebidas", members));
+		unPedido.setUrlRemoveFromBebidas(setearURL("removeFromBebidas", members));
+		unPedido.setUrlEnviar(setearURL("enviar", members));
+		unPedido.setUrlTomarMenues(setearURL("tomarMenues", members));
+		unPedido.setUrlRemoveFromMenues(setearURL("removeFromMenues", members));
+		unPedido.setUrlPedirPlatosEntrada(setearURL("pedirPlatosEntrada",
+				members));
+		unPedido.setUrlPedirPlatosPrincipales(setearURL(
+				"pedirPlatosPrincipales", members));
+		unPedido.setUrlPedirGuarniciones(setearURL("pedirGuarniciones", members));
+		unPedido.setUrlPedirPostres(setearURL("pedirPostres", members));
+		unPedido.setUrlRemoveFromComanda(setearURL("removeFromComanda", members));
+	}
+
+	private String setearURL(String accion, JSONObject unJSONObject) {
+
+		try {
+			JSONObject accionDo = unJSONObject.getJSONObject(accion);
+			JSONArray linkDo = accionDo.getJSONArray("links");
+			JSONObject arregloDo = linkDo.getJSONObject(0);
+			return arregloDo.optString("href");
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	@Override
@@ -157,9 +191,9 @@ public class PedidosActivity extends Activity {
 		if (id == R.id.action_settings) {
 			return true;
 		}
-		
+
 		if (id == R.id.pedido) {
-			
+
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
