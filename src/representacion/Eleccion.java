@@ -8,6 +8,8 @@ public class Eleccion implements Parcelable{
 	private String url;
 	private int cantidad;
 	private String nota;
+	private String tipo;
+	private String invokeURL;
 	
 	
 	public Eleccion() {
@@ -18,6 +20,10 @@ public class Eleccion implements Parcelable{
 
 		this.title = source.readString();
 		this.url = source.readString();
+		this.cantidad = source.readInt();
+		this.nota = source.readString();
+		this.tipo = source.readString();
+		this.invokeURL = source.readString();
 
 	}
 
@@ -65,7 +71,26 @@ public class Eleccion implements Parcelable{
 		// TODO Auto-generated method stub
 		dest.writeString(title);
 		dest.writeString(url);
-		
+		dest.writeInt(cantidad);
+		dest.writeString(nota);
+		dest.writeString(tipo);
+		dest.writeString(invokeURL);
+	}
+
+	public String getTipo() {
+		return tipo;
+	}
+
+	public void setTipo(String tipo) {
+		this.tipo = tipo;
+	}
+
+	public String getInvokeURL() {
+		return invokeURL;
+	}
+
+	public void setInvokeURL(String invokeURL) {
+		this.invokeURL = invokeURL;
 	}
 
 }

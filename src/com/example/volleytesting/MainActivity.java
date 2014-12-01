@@ -3,39 +3,27 @@ package com.example.volleytesting;
 import java.util.ArrayList;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
-
 import representacion.Mesa;
-
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 import com.example.volleytesting.R;
-import com.example.volleytesting.R.id;
-import com.example.volleytesting.R.layout;
-import com.example.volleytesting.R.menu;
-
 import actividades.PedidosActivity;
 import adaptadores.MesaAdapter;
-import android.R.string;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.BaseAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 
 public class MainActivity extends Activity {
 
@@ -43,8 +31,6 @@ public class MainActivity extends Activity {
 	private ListView lstView;
 	private ArrayList<Mesa> mesasAsignadas;
 	private MesaAdapter adapterMesa;
-	private ProgressDialog dialogoProgreso;
-	private JSONArray listaMesas;
 	private ProgressDialog pd;
 	String uri;
 	RequestQueue solicitud;

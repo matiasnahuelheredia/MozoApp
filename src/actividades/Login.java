@@ -1,38 +1,23 @@
 package actividades;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
 import networking.Conexion;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import representacion.Mesa;
-
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
 import com.example.volleytesting.R;
-import com.example.volleytesting.R.id;
-import com.example.volleytesting.R.layout;
-import com.example.volleytesting.R.menu;
-
-import forTesting.Auxiliar;
-
 import adaptadores.MesaAdapter;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
