@@ -1,38 +1,25 @@
 package actividades;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
-
 import networking.Conexion;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import representacion.Mesa;
 import representacion.Pedido;
 import representacion.Producto;
-
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
 import com.example.volleytesting.R;
-import com.example.volleytesting.R.id;
-import com.example.volleytesting.R.layout;
-import com.example.volleytesting.R.menu;
-
 import adaptadores.PedidoAdapter;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Base64;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -41,19 +28,20 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
 public class PedidosActivity extends Activity {
-	
+
 	private ListView lstView;
 	private ArrayList<Pedido> arregloPedidos;
 	private ArrayList<Producto> arregloProductos;
+	private Pedido unPedido;
 	private PedidoAdapter adaptadorPedidos;
-	private ProgressDialog pd;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_pedidos);
 		final RequestQueue colaSolicitud = Conexion.getInstance(
 				getApplicationContext()).getRequestQueue();
+		arregloProductos = new ArrayList<Producto>();
 		arregloPedidos = new ArrayList<Pedido>();
 		arregloPedidos = getIntent().getExtras().getParcelableArrayList(
 				"listaPedidos");
@@ -66,47 +54,57 @@ public class PedidosActivity extends Activity {
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				// TODO Auto-generated method stub
-				Pedido unPedido = (Pedido) parent.getAdapter()
-						.getItem(position);
+				unPedido = (Pedido) parent.getAdapter().getItem(position);
 				final ProgressDialog pd = ProgressDialog.show(
 						PedidosActivity.this, "Aguarde por favor...",
 						"Aguarde por favor...");
-				JsonObjectRequest solicitudProductos = new JsonObjectRequest(Request.Method.GET, unPedido.getUrlDetalle(), null, 
+				JsonObjectRequest solicitudProductos = new JsonObjectRequest(
+						Request.Method.GET, unPedido.getUrlDetalle(), null,
 						new Response.Listener<JSONObject>() {
 
 							@Override
 							public void onResponse(JSONObject response) {
 								// TODO Auto-generated method stub
-								
-								
-							}
-				}, new Response.ErrorListener() {
+								System.out.println("Entrooooooo");
+								parseJSON(response);
+								Bundle bundle = new Bundle();
+								bundle.putParcelableArrayList("listaProductos",
+										arregloProductos);
+								bundle.putParcelable("elPedido", unPedido);
+								Intent intent = new Intent(
+										PedidosActivity.this,
+										ProductosActivity.class);
+								intent.putExtras(bundle);
+								startActivity(intent);
+								pd.dismiss();
 
-					@Override
-					public void onErrorResponse(VolleyError error) {
-						// TODO Auto-generated method stub
-						
-					}
-				}){
+							}
+						}, new Response.ErrorListener() {
+
+							@Override
+							public void onErrorResponse(VolleyError error) {
+								// TODO Auto-generated method stub
+								System.out.println("Noo Entrooooooo");
+								pd.dismiss();
+
+							}
+						}) {
 
 					@Override
 					public Map<String, String> getHeaders()
 							throws AuthFailureError {
 						// TODO Auto-generated method stub
 						return Conexion.createBasicAuthHeader();
-					}};
-				Bundle bundle = new Bundle();
-				bundle.putParcelable("pedido", unPedido);				
-				Intent intent = new Intent(PedidosActivity.this,
-						ProductosActivity.class);
-				intent.putExtras(bundle);
-				startActivity(intent);
+					}
+				};
+
+				colaSolicitud.add(solicitudProductos);
 
 			}
 		});
 
 	}
-	
+
 	private void parseJSON(JSONObject json) {
 		JSONObject members = null;
 		try {

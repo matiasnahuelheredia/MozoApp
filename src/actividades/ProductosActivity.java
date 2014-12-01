@@ -41,73 +41,30 @@ public class ProductosActivity extends Activity {
 
 	private String TAG = this.getClass().getSimpleName();
 	private ListView lstView;
-	private RequestQueue mRequestQueue;
-	private ArrayList<Producto> arrNews;
-	private ProductoAdapter va;
+	private ArrayList<Producto> arregloProductos;
+	private ArrayList<Eleccion> arregloElecciones;
+	private ProductoAdapter adaptadorProductos;
 	private ProgressDialog pd;
-	private String usuario;
-	private String password;
+	private Pedido unPedido;
 	private String url;
-	private Pedido unPedido;	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_productos);
-		arrNews = new ArrayList<Producto>();
-		va = new ProductoAdapter(getApplicationContext(), arrNews);
+		arregloProductos = new ArrayList<Producto>();
+		arregloProductos = getIntent().getExtras().getParcelableArrayList(
+				"listaProductos");
+		adaptadorProductos = new ProductoAdapter(getApplicationContext(),
+				arregloProductos);
 		lstView = (ListView) findViewById(R.id.listProductos);
-		lstView.setAdapter(va);
-		mRequestQueue = Volley.newRequestQueue(this);
-		unPedido = getIntent().getExtras().getParcelable("pedido");
-		url = unPedido.getUrlDetalle();
-		usuario = getIntent().getExtras().getString("user");
-		password = getIntent().getExtras().getString("password");
-		pd = ProgressDialog.show(this, "Aguarde por favor...",
-				"Aguarde por favor...");
-		JsonObjectRequest jr = new JsonObjectRequest(Request.Method.GET, url,
-				null, new Response.Listener<JSONObject>() {
-					@Override
-					public void onResponse(JSONObject response) {
-						System.out.println("Entroooooooooooooo");
-						Log.i(TAG, response.toString());
-						parseJSON(response);
-						va.notifyDataSetChanged();
-						pd.dismiss();
-						;
-					}
-				}, new Response.ErrorListener() {
-					@Override
-					public void onErrorResponse(VolleyError error) {
-						Log.i(TAG, error.getMessage());
-						System.out.println("Nooooooo Entroooooooooooooo");
-					}
-				}) {
-
-			@Override
-			public Map<String, String> getHeaders() throws AuthFailureError {
-				// TODO Auto-generated method stub
-				return createBasicAuthHeader(usuario, password);
-			}
-
-			Map<String, String> createBasicAuthHeader(String username,
-					String password) {
-				Map<String, String> headerMap = new HashMap<String, String>();
-
-				String credentials = username + ":" + password;
-				String encodedCredentials = Base64.encodeToString(
-						credentials.getBytes(), Base64.NO_WRAP);
-				headerMap.put("Authorization", "Basic " + encodedCredentials);
-				return headerMap;
-			}
-
-		};
-		mRequestQueue.add(jr);
+		lstView.setAdapter(adaptadorProductos);
+		unPedido = getIntent().getExtras().getParcelable("elPedido");
 
 	}
-	
-	private void cargarLista(){
-		
+
+	private void cargarLista() {
+
 	}
 
 	private void parseJSON(JSONObject json) {
@@ -125,7 +82,7 @@ public class ProductosActivity extends Activity {
 				Producto unProducto = new Producto();
 				unProducto.setTitle(producto.optString("title"));
 				unProducto.setUrlDetalle(producto.optString("href"));
-				arrNews.add(unProducto);
+				arregloProductos.add(unProducto);
 			}
 
 			JSONObject bebidasDelPedido = members.getJSONObject("bebidas");
@@ -135,7 +92,7 @@ public class ProductosActivity extends Activity {
 				Producto unProducto = new Producto();
 				unProducto.setTitle(producto.optString("title"));
 				unProducto.setUrlDetalle(producto.optString("href"));
-				arrNews.add(unProducto);
+				arregloProductos.add(unProducto);
 			}
 
 			JSONObject menuesComanda = members.getJSONObject("menuesComanda");
@@ -145,7 +102,7 @@ public class ProductosActivity extends Activity {
 				Producto unProducto = new Producto();
 				unProducto.setTitle(producto.optString("title"));
 				unProducto.setUrlDetalle(producto.optString("href"));
-				arrNews.add(unProducto);
+				arregloProductos.add(unProducto);
 			}
 
 		} catch (Exception e) {
@@ -196,14 +153,13 @@ public class ProductosActivity extends Activity {
 		if (id == R.id.bebidas) {
 
 			url = unPedido.getUrlPedirBebidas();
+			
 			Bundle bundle = new Bundle();
 			bundle.putString("url", url);
-			bundle.putString("user", usuario);
-			bundle.putString("password", password);
 			Intent intent = new Intent(ProductosActivity.this,
 					EleccionActivity.class);
 			intent.putExtras(bundle);
-			startActivityForResult(intent,0);			
+			startActivityForResult(intent, 0);
 
 			return true;
 		}
@@ -211,27 +167,23 @@ public class ProductosActivity extends Activity {
 			url = unPedido.getUrlTomarMenues();
 			Bundle bundle = new Bundle();
 			bundle.putString("url", url);
-			bundle.putString("user", usuario);
-			bundle.putString("password", password);
 			Intent intent = new Intent(ProductosActivity.this,
 					EleccionActivity.class);
 			intent.putExtras(bundle);
-			startActivityForResult(intent,0);
+			startActivityForResult(intent, 0);
 
 			return true;
 
 		}
-		
+
 		if (id == R.id.entrada) {
 			url = unPedido.getUrlPedirPlatosEntrada();
 			Bundle bundle = new Bundle();
 			bundle.putString("url", url);
-			bundle.putString("user", usuario);
-			bundle.putString("password", password);
 			Intent intent = new Intent(ProductosActivity.this,
 					EleccionActivity.class);
 			intent.putExtras(bundle);
-			startActivityForResult(intent,0);
+			startActivityForResult(intent, 0);
 
 			return true;
 
@@ -240,42 +192,36 @@ public class ProductosActivity extends Activity {
 			url = unPedido.getUrlPedirPlatosPrincipales();
 			Bundle bundle = new Bundle();
 			bundle.putString("url", url);
-			bundle.putString("user", usuario);
-			bundle.putString("password", password);
 			Intent intent = new Intent(ProductosActivity.this,
 					EleccionActivity.class);
 			intent.putExtras(bundle);
-			startActivityForResult(intent,0);
+			startActivityForResult(intent, 0);
 
 			return true;
 
 		}
-		
+
 		if (id == R.id.guarnicion) {
 			url = unPedido.getUrlPedirGuarniciones();
 			Bundle bundle = new Bundle();
 			bundle.putString("url", url);
-			bundle.putString("user", usuario);
-			bundle.putString("password", password);
 			Intent intent = new Intent(ProductosActivity.this,
 					EleccionActivity.class);
 			intent.putExtras(bundle);
-			startActivityForResult(intent,0);
+			startActivityForResult(intent, 0);
 
 			return true;
 
 		}
-		
+
 		if (id == R.id.postre) {
 			url = unPedido.getUrlPedirPostres();
 			Bundle bundle = new Bundle();
 			bundle.putString("url", url);
-			bundle.putString("user", usuario);
-			bundle.putString("password", password);
 			Intent intent = new Intent(ProductosActivity.this,
 					EleccionActivity.class);
 			intent.putExtras(bundle);
-			startActivityForResult(intent,0);
+			startActivityForResult(intent, 0);
 
 			return true;
 
@@ -285,24 +231,67 @@ public class ProductosActivity extends Activity {
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		// TODO Auto-generated method stub				
-		 switch(requestCode) { 
-		    case (0) : { 
-		      if (resultCode == Activity.RESULT_OK) {		    	  
-		        
-		    	  Producto unProducto = new Producto();		    	  
-		    	  unProducto  = data.getExtras().getParcelable("productoNew");
-		    	  String temp = data.getExtras().getString("urlPedido");
-//		    	  urlUpdate = data.getExtras().getString("");
-//		    	  arrNews.add(unProducto);
-//		    	  va.notifyDataSetChanged();
-		    	  		    	  
-		    	 
-		      } 
-		      break; 
-		    } 
-		  }
-		 super.onActivityResult(requestCode, resultCode, data);
+		// TODO Auto-generated method stub
+		switch (requestCode) {
+		case (0): {
+			if (resultCode == Activity.RESULT_OK) {
+
+				Producto unProducto = new Producto();
+				unProducto = data.getExtras().getParcelable("productoNew");
+				String temp = data.getExtras().getString("urlPedido");
+
+			}
+			break;
+		}
+		}
+		super.onActivityResult(requestCode, resultCode, data);
 	}
 	
+	private void parseJSONChoices(JSONObject json) {
+		try {
+			JSONArray links = json.getJSONArray("links");
+			urlInvoke = links.getJSONObject(2).getString("href").toString();
+			JSONObject parameters = json.getJSONObject("parameters");
+			JSONArray temp = parameters.names();
+			JSONObject item = null;
+			if (temp.toString().contains("bebida1")) {
+				item = parameters.getJSONObject("bebida1");
+				tipo = "bebida1";
+			}
+			if (temp.toString().contains("platoEntrada1")) {
+				item = parameters.getJSONObject("platoEntrada1");
+				tipo = "platoEntrada1";
+			}
+			if (temp.toString().contains("platoPrincipal1")) {
+				item = parameters.getJSONObject("platoPrincipal1");
+				tipo = "platoPrincipal1";
+			}
+			if (temp.toString().contains("postre1")) {
+				item = parameters.getJSONObject("postre1");
+				tipo = "postre1";
+			}
+			if (temp.toString().contains("guarnición1")) {
+				item = parameters.getJSONObject("guarnición1");
+				tipo = "guarnici�";
+			}
+			if (temp.toString().contains("menu1")) {
+				item = parameters.getJSONObject("menu1");
+				tipo = "menu1";
+			}
+
+			JSONArray choices = item.getJSONArray("choices");
+			for (int i = 0; i < choices.length(); i++) {
+				JSONObject unaOpcion = choices.getJSONObject(i);
+				Eleccion unaEleccion = new Eleccion();
+				unaEleccion.setTitle(unaOpcion.optString("title"));
+				unaEleccion.setUrl(unaOpcion.optString("href"));
+				arregloElecciones.add(unaEleccion);
+			}
+
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
 }

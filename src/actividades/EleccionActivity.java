@@ -38,10 +38,7 @@ public class EleccionActivity extends Activity {
 
 	private String TAG = this.getClass().getSimpleName();
 	private ListView lstView;
-	private RequestQueue mRequestQueue;
 	private ProgressDialog pd;
-	private String usuario;
-	private String password;
 	private String url;
 	private ArrayList<Eleccion> arregloElecciones;
 	private EleccionAdapter eleccionAdapter;
@@ -54,56 +51,12 @@ public class EleccionActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_eleccion);
-
 		arregloElecciones = new ArrayList<Eleccion>();
 		eleccionAdapter = new EleccionAdapter(getApplicationContext(),
 				arregloElecciones);
 		lstView = (ListView) findViewById(R.id.listEleccion);
 		lstView.setAdapter(eleccionAdapter);
 		url = getIntent().getExtras().getString("url");
-		usuario = getIntent().getExtras().getString("user");
-		password = getIntent().getExtras().getString("password");
-		mRequestQueue = Volley.newRequestQueue(this);
-		pd = ProgressDialog.show(this, "Aguarde por favor...",
-				"Aguarde por favor...");
-		JsonObjectRequest jr = new JsonObjectRequest(Request.Method.GET, url,
-				null, new Response.Listener<JSONObject>() {
-					@Override
-					public void onResponse(JSONObject response) {
-						System.out.println("Entroooooooooooooo");
-						Log.i(TAG, response.toString());
-						parseJSONChoices(response);
-						eleccionAdapter.notifyDataSetChanged();
-						pd.dismiss();
-						;
-					}
-				}, new Response.ErrorListener() {
-					@Override
-					public void onErrorResponse(VolleyError error) {
-						Log.i(TAG, error.getMessage());
-						System.out.println("Nooooooo Entroooooooooooooo");
-					}
-				}) {
-
-			@Override
-			public Map<String, String> getHeaders() throws AuthFailureError {
-				// TODO Auto-generated method stub
-				return createBasicAuthHeader(usuario, password);
-			}
-
-			Map<String, String> createBasicAuthHeader(String username,
-					String password) {
-				Map<String, String> headerMap = new HashMap<String, String>();
-
-				String credentials = username + ":" + password;
-				String encodedCredentials = Base64.encodeToString(
-						credentials.getBytes(), Base64.NO_WRAP);
-				headerMap.put("Authorization", "Basic " + encodedCredentials);				
-				return headerMap;
-			}
-
-		};
-		mRequestQueue.add(jr);
 		lstView.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
@@ -156,7 +109,6 @@ public class EleccionActivity extends Activity {
 					}
 					
 				};
-			mRequestQueue.add(jsonPost);			
 			Intent intentRegreso = new Intent();
 			intentRegreso.putExtra("productoNew", unProducto);
 			intentRegreso.putExtra("urlPedido", urlPedido);
