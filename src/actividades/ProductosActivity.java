@@ -39,7 +39,7 @@ public class ProductosActivity extends Activity {
 		colaSolicitud = Conexion.getInstance(
 				getApplicationContext()).getRequestQueue();
 		arregloProductos = new ArrayList<Producto>();
-		arregloElecciones = new ArrayList<Eleccion>();
+//		arregloElecciones = new ArrayList<Eleccion>();
 		arregloProductos = getIntent().getExtras().getParcelableArrayList(
 				"listaProductos");
 		adaptadorProductos = new ProductoAdapter(getApplicationContext(),
@@ -56,7 +56,8 @@ public class ProductosActivity extends Activity {
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {		
+	public boolean onOptionsItemSelected(MenuItem item) {	
+		arregloElecciones = new ArrayList<Eleccion>();
 		int id = item.getItemId();
 		if (id == R.id.action_settings) {
 			return true;
@@ -153,9 +154,10 @@ public class ProductosActivity extends Activity {
 							@Override
 							public void onResponse(JSONObject response) {
 								// TODO Auto-generated method stub
-								parseJSON(response);
+								parseJSON(response);								
+								adaptadorProductos.actualizar(arregloProductos);
 								adaptadorProductos.notifyDataSetChanged();
-								System.out.println("Result OK");
+								System.out.println("Result OK");								
 							}
 						}, new Response.ErrorListener() {
 

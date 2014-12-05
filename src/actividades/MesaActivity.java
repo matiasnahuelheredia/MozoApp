@@ -40,7 +40,7 @@ public class MesaActivity extends Activity {
 		setContentView(R.layout.activity_mesa);
 		arregloMesas = getIntent().getExtras().getParcelableArrayList(
 				"listaDeMesas");
-		arregloPedidos = new ArrayList<Pedido>();
+//		arregloPedidos = new ArrayList<Pedido>();
 		adaptadorMesas = new MesaAdapter(getApplicationContext(), arregloMesas);
 		lstView = (ListView) findViewById(R.id.lista_mesas);
 		lstView.setAdapter(adaptadorMesas);
@@ -64,6 +64,7 @@ public class MesaActivity extends Activity {
 							public void onResponse(JSONObject response) {
 								// TODO Auto-generated method stub
 								System.out.println("Entroooooooo");
+								arregloPedidos = new ArrayList<Pedido>();
 								parseJSON(response);
 								Bundle bundle = new Bundle();
 								bundle.putParcelableArrayList("listaPedidos",

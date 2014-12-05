@@ -31,6 +31,9 @@ public class ProductoAdapter extends BaseAdapter {
 		this.datos = datos;
 		inflater = LayoutInflater.from(contexto);
 	}
+	public void actualizar(ArrayList<Producto> datos){
+		this.datos = datos;
+	}
 
 	@Override
 	public int getCount() {

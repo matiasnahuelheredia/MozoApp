@@ -41,7 +41,7 @@ public class PedidosActivity extends Activity {
 		setContentView(R.layout.activity_pedidos);
 		final RequestQueue colaSolicitud = Conexion.getInstance(
 				getApplicationContext()).getRequestQueue();
-		arregloProductos = new ArrayList<Producto>();
+//		arregloProductos = new ArrayList<Producto>();
 		arregloPedidos = new ArrayList<Pedido>();
 		arregloPedidos = getIntent().getExtras().getParcelableArrayList(
 				"listaPedidos");
@@ -66,6 +66,7 @@ public class PedidosActivity extends Activity {
 							public void onResponse(JSONObject response) {
 								// TODO Auto-generated method stub
 								System.out.println("Entrooooooo");
+								arregloProductos = new ArrayList<Producto>();
 								parseJSON(response);
 								Bundle bundle = new Bundle();
 								bundle.putParcelableArrayList("listaProductos",
