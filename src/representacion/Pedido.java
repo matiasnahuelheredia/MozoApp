@@ -1,5 +1,9 @@
 package representacion;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -167,5 +171,40 @@ public class Pedido implements Parcelable {
 	public void setUrlRemoveFromComanda(String urlRemoveFromComanda) {
 		this.urlRemoveFromComanda = urlRemoveFromComanda;
 	}
+	public void llenarLinks(JSONObject jsonResult){
+		JSONObject members;
+		try {
+			members = jsonResult.getJSONObject("members");
+			this.setUrlPedirBebidas(setearURL("pedirBebidas", members));
+			this.setUrlRemoveFromBebidas(setearURL("removeFromBebidas", members));
+			this.setUrlEnviar(setearURL("enviar", members));
+			this.setUrlTomarMenues(setearURL("tomarMenues", members));
+			this.setUrlRemoveFromMenues(setearURL("removeFromMenues", members));
+			this.setUrlPedirPlatosEntrada(setearURL("pedirPlatosEntrada",
+					members));
+			this.setUrlPedirPlatosPrincipales(setearURL(
+					"pedirPlatosPrincipales", members));
+			this.setUrlPedirGuarniciones(setearURL("pedirGuarniciones", members));
+			this.setUrlPedirPostres(setearURL("pedirPostres", members));
+			this.setUrlRemoveFromComanda(setearURL("removeFromComanda", members));
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
 
+	private String setearURL(String accion, JSONObject unJSONObject) {
+
+		try {
+			JSONObject accionDo = unJSONObject.getJSONObject(accion);
+			JSONArray linkDo = accionDo.getJSONArray("links");
+			JSONObject arregloDo = linkDo.getJSONObject(0);
+			return arregloDo.optString("href");
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
 }

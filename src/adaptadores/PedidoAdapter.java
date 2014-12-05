@@ -3,6 +3,7 @@ package adaptadores;
 import java.util.ArrayList;
 
 import representacion.Pedido;
+import representacion.Producto;
 
 import com.example.volleytesting.R;
 import com.example.volleytesting.R.id;
@@ -72,6 +73,9 @@ public class PedidoAdapter extends BaseAdapter {
 		holder.tvNumeroPedido.setText(datos.get(position).getTitle());
 		return convertView;
 
+	}
+	public void actualizar(ArrayList<Pedido> datos){
+		this.datos = datos;
 	}
 
 }

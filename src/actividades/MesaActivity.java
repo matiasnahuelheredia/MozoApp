@@ -53,6 +53,7 @@ public class MesaActivity extends Activity {
 					int position, long id) {
 				// TODO Auto-generated method stub
 				Mesa unaMesa = (Mesa) parent.getAdapter().getItem(position);
+				final int posicionMesa= position;
 				final ProgressDialog pd = ProgressDialog.show(
 						MesaActivity.this, "Aguarde por favor...",
 						"Aguarde por favor...");
@@ -65,8 +66,10 @@ public class MesaActivity extends Activity {
 								// TODO Auto-generated method stub
 								System.out.println("Entroooooooo");
 								arregloPedidos = new ArrayList<Pedido>();
-								parseJSON(response);
+								parseJSON(response);								 
+								arregloMesas.get(posicionMesa).llenarLinks(response);
 								Bundle bundle = new Bundle();
+								bundle.putParcelable("unaMesa", arregloMesas.get(posicionMesa));
 								bundle.putParcelableArrayList("listaPedidos",
 										arregloPedidos);
 								Intent intent = new Intent(MesaActivity.this,
@@ -140,7 +143,7 @@ public class MesaActivity extends Activity {
 				unPedido.setTitle(pedido.optString("title"));
 				unPedido.setUrlDetalle(pedido.optString("href"));
 				arregloPedidos.add(unPedido);
-			}
+			}			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

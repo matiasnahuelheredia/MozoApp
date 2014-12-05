@@ -6,6 +6,8 @@ import networking.Conexion;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import representacion.Mesa;
 import representacion.Pedido;
 import representacion.Producto;
 import com.android.volley.AuthFailureError;
@@ -34,12 +36,12 @@ public class PedidosActivity extends Activity {
 	private ArrayList<Producto> arregloProductos;
 	private Pedido unPedido;
 	private PedidoAdapter adaptadorPedidos;
-
+	private RequestQueue colaSolicitud;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_pedidos);
-		final RequestQueue colaSolicitud = Conexion.getInstance(
+		colaSolicitud = Conexion.getInstance(
 				getApplicationContext()).getRequestQueue();
 //		arregloProductos = new ArrayList<Producto>();
 		arregloPedidos = new ArrayList<Pedido>();
@@ -55,6 +57,7 @@ public class PedidosActivity extends Activity {
 					int position, long id) {
 				// TODO Auto-generated method stub
 				unPedido = (Pedido) parent.getAdapter().getItem(position);
+				final int posicionPedido = position;
 				final ProgressDialog pd = ProgressDialog.show(
 						PedidosActivity.this, "Aguarde por favor...",
 						"Aguarde por favor...");
@@ -67,11 +70,12 @@ public class PedidosActivity extends Activity {
 								// TODO Auto-generated method stub
 								System.out.println("Entrooooooo");
 								arregloProductos = new ArrayList<Producto>();
-								parseJSON(response);
+								parseJSON(response);	
+								arregloPedidos.get(posicionPedido).llenarLinks(response);
 								Bundle bundle = new Bundle();
 								bundle.putParcelableArrayList("listaProductos",
 										arregloProductos);
-								bundle.putParcelable("elPedido", unPedido);
+								bundle.putParcelable("elPedido", arregloPedidos.get(posicionPedido));
 								Intent intent = new Intent(
 										PedidosActivity.this,
 										ProductosActivity.class);
@@ -148,33 +152,9 @@ public class PedidosActivity extends Activity {
 			e.printStackTrace();
 		}
 
-		unPedido.setUrlPedirBebidas(setearURL("pedirBebidas", members));
-		unPedido.setUrlRemoveFromBebidas(setearURL("removeFromBebidas", members));
-		unPedido.setUrlEnviar(setearURL("enviar", members));
-		unPedido.setUrlTomarMenues(setearURL("tomarMenues", members));
-		unPedido.setUrlRemoveFromMenues(setearURL("removeFromMenues", members));
-		unPedido.setUrlPedirPlatosEntrada(setearURL("pedirPlatosEntrada",
-				members));
-		unPedido.setUrlPedirPlatosPrincipales(setearURL(
-				"pedirPlatosPrincipales", members));
-		unPedido.setUrlPedirGuarniciones(setearURL("pedirGuarniciones", members));
-		unPedido.setUrlPedirPostres(setearURL("pedirPostres", members));
-		unPedido.setUrlRemoveFromComanda(setearURL("removeFromComanda", members));
+		
 	}
-
-	private String setearURL(String accion, JSONObject unJSONObject) {
-
-		try {
-			JSONObject accionDo = unJSONObject.getJSONObject(accion);
-			JSONArray linkDo = accionDo.getJSONArray("links");
-			JSONObject arregloDo = linkDo.getJSONObject(0);
-			return arregloDo.optString("href");
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
-	}
+	
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -192,9 +172,124 @@ public class PedidosActivity extends Activity {
 		}
 
 		if (id == R.id.pedido) {
+			final Mesa unaMesa = getIntent().getExtras().getParcelable("unaMesa");
+			if (!(unaMesa.getTomarPedidoURL().contains("invoke"))){
+				//Obtengo el invoke
+				JsonObjectRequest solicitudMesa = new JsonObjectRequest(Request.Method.GET, unaMesa.getTomarPedidoURL(),null, 
+						new Response.Listener<JSONObject>() {
 
+							@Override
+							public void onResponse(JSONObject response) {
+								// TODO Auto-generated method stub
+								try {
+									System.out.println(response.getJSONArray("links").getJSONObject(2).getString("href"));									
+									unaMesa.setTomarPedidoURL(response.getJSONArray("links").getJSONObject(2).getString("href"));
+								} catch (JSONException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+							}
+						}, 
+						new Response.ErrorListener() {
+
+							@Override
+							public void onErrorResponse(VolleyError error) {
+								// TODO Auto-generated method stub
+								System.out.println("No entroo a refrescar!");
+								
+							}
+						}){
+
+							@Override
+							public Map<String, String> getHeaders()
+									throws AuthFailureError {
+								// TODO Auto-generated method stub
+								return Conexion.createBasicAuthHeader();
+							}
+					
+				};				
+				colaSolicitud.add(solicitudMesa);
+			}
+			//Realizo el POST
+			System.out.println(unaMesa.getTomarPedidoURL());
+			JsonObjectRequest pedidoPost = new JsonObjectRequest(Request.Method.POST, unaMesa.getTomarPedidoURL(), null, 
+					new Response.Listener<JSONObject>() {
+
+						@Override
+						public void onResponse(JSONObject response) {
+							// TODO Auto-generated method stub
+							
+						}
+					}, 
+					new Response.ErrorListener() {
+
+						@Override
+						public void onErrorResponse(VolleyError error) {
+							// TODO Auto-generated method stub
+							
+						}
+					}){
+
+						@Override
+						public Map<String, String> getHeaders()
+								throws AuthFailureError {
+							// TODO Auto-generated method stub
+							return Conexion.createBasicAuthHeader();
+						}
+				
+			};
+			colaSolicitud.add(pedidoPost);
+			
+			JsonObjectRequest actulizarPedidos = new JsonObjectRequest(Request.Method.GET, unaMesa.getUrlDetalle(), null,
+					new Response.Listener<JSONObject>() {
+
+						@Override
+						public void onResponse(JSONObject response) {
+							// TODO Auto-generated method stub							
+							actualizarArregloPedidos(response);
+							adaptadorPedidos.actualizar(arregloPedidos);
+							adaptadorPedidos.notifyDataSetChanged();
+						}
+					},
+					new Response.ErrorListener() {
+
+						@Override
+						public void onErrorResponse(VolleyError error) {
+							// TODO Auto-generated method stub
+							
+						}
+					}){
+
+						@Override
+						public Map<String, String> getHeaders()
+								throws AuthFailureError {
+							// TODO Auto-generated method stub
+							return Conexion.createBasicAuthHeader();
+						}
+				
+			};
+			colaSolicitud.add(actulizarPedidos);
+			
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+	private void actualizarArregloPedidos(JSONObject json) {
+		try {
+			arregloPedidos = new ArrayList<Pedido>();
+			JSONObject members = json.getJSONObject("members");
+			JSONObject pedidos = members.getJSONObject("pedidos");
+			JSONArray value = pedidos.getJSONArray("value");
+			for (int i = 0; i < value.length(); i++) {
+				JSONObject pedido = value.getJSONObject(i);
+				Pedido unPedido = new Pedido();
+				unPedido.setTitle(pedido.optString("title"));
+				unPedido.setUrlDetalle(pedido.optString("href"));
+				arregloPedidos.add(unPedido);
+			}			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 	}
 }
