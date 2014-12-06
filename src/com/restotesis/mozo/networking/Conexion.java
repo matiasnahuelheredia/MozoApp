@@ -1,4 +1,4 @@
-package networking;
+package com.restotesis.mozo.networking;
 
 import java.util.HashMap;
 import java.util.Map;

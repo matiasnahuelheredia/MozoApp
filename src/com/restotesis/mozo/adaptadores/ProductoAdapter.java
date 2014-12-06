@@ -1,33 +1,38 @@
-package adaptadores;
+package com.restotesis.mozo.adaptadores;
 
 import java.util.ArrayList;
 
-import com.example.volleytesting.R;
-
-import representacion.Eleccion;
 import android.content.Context;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-public class EleccionAdapter extends BaseAdapter {
-	
-	static class ViewHolder {
-		TextView tvChoice;
+import com.restotesis.mozo.R;
+import com.restotesis.mozo.adaptadores.PedidoAdapter.ViewHolder;
+import com.restotesis.mozo.representacion.Pedido;
+import com.restotesis.mozo.representacion.Producto;
 
+public class ProductoAdapter extends BaseAdapter {
+
+	static class ViewHolder {
+		TextView tvNombreProducto;
+		// TextView tvCantidad;
 	}
 
 	private static final String TAG = "CustomAdapter";
 	private static int convertViewCounter = 0;
-	private ArrayList<Eleccion> datos;
+	private ArrayList<Producto> datos;
 	private LayoutInflater inflater = null;
 
-	public EleccionAdapter(Context contexto, ArrayList<Eleccion> datos) {
+	public ProductoAdapter(Context contexto, ArrayList<Producto> datos) {
+
 		this.datos = datos;
 		inflater = LayoutInflater.from(contexto);
+	}
+	public void actualizar(ArrayList<Producto> datos){
+		this.datos = datos;
 	}
 
 	@Override
@@ -45,7 +50,7 @@ public class EleccionAdapter extends BaseAdapter {
 	@Override
 	public long getItemId(int position) {
 		// TODO Auto-generated method stub
-		return 0;
+		return position;
 	}
 
 	@Override
@@ -54,18 +59,18 @@ public class EleccionAdapter extends BaseAdapter {
 		ViewHolder holder;
 
 		if (convertView == null) {
-			convertView = inflater.inflate(R.layout.linea_eleccionview, null);
+			convertView = inflater.inflate(R.layout.linea_productosview, null);
 			holder = new ViewHolder();
-			holder.tvChoice = (TextView) convertView
-					.findViewById(R.id.txtUnaEleccion);
-			holder.tvChoice.setTextColor(Color.BLACK);
+			holder.tvNombreProducto = (TextView) convertView
+					.findViewById(R.id.txtUnProducto);
 			convertView.setTag(holder);
 
 		} else
 			holder = (ViewHolder) convertView.getTag();
 
-		holder.tvChoice.setText(datos.get(position).getTitle());
+		holder.tvNombreProducto.setText(datos.get(position).getTitle());
 		return convertView;
+
 	}
 
 }

@@ -1,4 +1,4 @@
-package actividades;
+package com.restotesis.mozo.actividades;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -10,11 +10,11 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.example.volleytesting.R;
-import networking.Conexion;
-import representacion.Mesa;
-import representacion.Pedido;
-import adaptadores.MesaAdapter;
+import com.restotesis.mozo.R;
+import com.restotesis.mozo.adaptadores.MesaAdapter;
+import com.restotesis.mozo.networking.Conexion;
+import com.restotesis.mozo.representacion.Mesa;
+import com.restotesis.mozo.representacion.Pedido;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;

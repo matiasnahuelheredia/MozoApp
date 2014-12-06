@@ -1,14 +1,9 @@
-package adaptadores;
+package com.restotesis.mozo.adaptadores;
 
 import java.util.ArrayList;
 
-import representacion.Mesa;
-
-import com.example.volleytesting.R;
-
-import com.example.volleytesting.R.id;
-import com.example.volleytesting.R.layout;
-
+import com.restotesis.mozo.R;
+import com.restotesis.mozo.representacion.Mesa;
 import android.content.Context;
 import android.graphics.Color;
 import android.view.LayoutInflater;

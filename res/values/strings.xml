@@ -18,5 +18,6 @@
     <string name="menu_pedidos_tomarPedido">Pedido</string>
     <string name="menu_mesa_Pedido">Pedido</string>
     <string name="title_activity_eleccion">Eleccion</string>
+    <string name="title_activity_eliminar_producto">EliminarProductoActivity</string>
 
 </resources>
