@@ -37,6 +37,7 @@ public class PedidosActivity extends Activity {
 	private Pedido unPedido;
 	private PedidoAdapter adaptadorPedidos;
 	private RequestQueue colaSolicitud;
+	String url;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -172,9 +173,10 @@ public class PedidosActivity extends Activity {
 		}
 
 		if (id == R.id.pedido) {
-			final Mesa unaMesa = getIntent().getExtras().getParcelable("unaMesa");
+			final Mesa unaMesa = getIntent().getExtras().getParcelable("unaMesa");			
 			if (!(unaMesa.getTomarPedidoURL().contains("invoke"))){
 				//Obtengo el invoke
+				System.out.println(unaMesa.getTomarPedidoURL());
 				JsonObjectRequest solicitudMesa = new JsonObjectRequest(Request.Method.GET, unaMesa.getTomarPedidoURL(),null, 
 						new Response.Listener<JSONObject>() {
 
@@ -182,8 +184,67 @@ public class PedidosActivity extends Activity {
 							public void onResponse(JSONObject response) {
 								// TODO Auto-generated method stub
 								try {
-									System.out.println(response.getJSONArray("links").getJSONObject(2).getString("href"));									
+									System.out.println("Entro a obtener invoke");									
 									unaMesa.setTomarPedidoURL(response.getJSONArray("links").getJSONObject(2).getString("href"));
+									System.out.println(unaMesa.getTomarPedidoURL());
+									//Realizo POST
+									JsonObjectRequest pedidoPost = new JsonObjectRequest(Request.Method.POST, unaMesa.getTomarPedidoURL(), null, 
+											new Response.Listener<JSONObject>() {
+
+												@Override
+												public void onResponse(JSONObject response) {
+													// TODO Auto-generated method stub
+													//Actualizo
+													JsonObjectRequest actulizarPedidos = new JsonObjectRequest(Request.Method.GET, unaMesa.getUrlDetalle(), null,
+															new Response.Listener<JSONObject>() {
+
+																@Override
+																public void onResponse(JSONObject response) {
+																	// TODO Auto-generated method stub							
+																	actualizarArregloPedidos(response);
+																	adaptadorPedidos.actualizar(arregloPedidos);
+																	adaptadorPedidos.notifyDataSetChanged();
+																}
+															},
+															new Response.ErrorListener() {
+
+																@Override
+																public void onErrorResponse(VolleyError error) {
+																	// TODO Auto-generated method stub
+																	
+																}
+															}){
+
+																@Override
+																public Map<String, String> getHeaders()
+																		throws AuthFailureError {
+																	// TODO Auto-generated method stub
+																	return Conexion.createBasicAuthHeader();
+																}
+														
+													};
+													colaSolicitud.add(actulizarPedidos);
+													
+												}
+											}, 
+											new Response.ErrorListener() {
+
+												@Override
+												public void onErrorResponse(VolleyError error) {
+													// TODO Auto-generated method stub
+													
+												}
+											}){
+
+												@Override
+												public Map<String, String> getHeaders()
+														throws AuthFailureError {
+													// TODO Auto-generated method stub
+													return Conexion.createBasicAuthHeader();
+												}
+										
+									};
+									colaSolicitud.add(pedidoPost);
 								} catch (JSONException e) {
 									// TODO Auto-generated catch block
 									e.printStackTrace();
@@ -210,65 +271,11 @@ public class PedidosActivity extends Activity {
 				};				
 				colaSolicitud.add(solicitudMesa);
 			}
-			//Realizo el POST
-			System.out.println(unaMesa.getTomarPedidoURL());
-			JsonObjectRequest pedidoPost = new JsonObjectRequest(Request.Method.POST, unaMesa.getTomarPedidoURL(), null, 
-					new Response.Listener<JSONObject>() {
-
-						@Override
-						public void onResponse(JSONObject response) {
-							// TODO Auto-generated method stub
-							
-						}
-					}, 
-					new Response.ErrorListener() {
-
-						@Override
-						public void onErrorResponse(VolleyError error) {
-							// TODO Auto-generated method stub
-							
-						}
-					}){
-
-						@Override
-						public Map<String, String> getHeaders()
-								throws AuthFailureError {
-							// TODO Auto-generated method stub
-							return Conexion.createBasicAuthHeader();
-						}
-				
-			};
-			colaSolicitud.add(pedidoPost);
+		
 			
-			JsonObjectRequest actulizarPedidos = new JsonObjectRequest(Request.Method.GET, unaMesa.getUrlDetalle(), null,
-					new Response.Listener<JSONObject>() {
-
-						@Override
-						public void onResponse(JSONObject response) {
-							// TODO Auto-generated method stub							
-							actualizarArregloPedidos(response);
-							adaptadorPedidos.actualizar(arregloPedidos);
-							adaptadorPedidos.notifyDataSetChanged();
-						}
-					},
-					new Response.ErrorListener() {
-
-						@Override
-						public void onErrorResponse(VolleyError error) {
-							// TODO Auto-generated method stub
-							
-						}
-					}){
-
-						@Override
-						public Map<String, String> getHeaders()
-								throws AuthFailureError {
-							// TODO Auto-generated method stub
-							return Conexion.createBasicAuthHeader();
-						}
-				
-			};
-			colaSolicitud.add(actulizarPedidos);
+			
+			
+			
 			
 			return true;
 		}
