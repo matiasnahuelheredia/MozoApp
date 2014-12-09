@@ -24,8 +24,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
 
-public class ProductosActivity extends Activity {
-
+public class ProductosActivity extends Activity{
+	
 	private ListView lstView;
 	private ArrayList<Producto> arregloProductos;
 	private ArrayList<Eleccion> arregloElecciones;
