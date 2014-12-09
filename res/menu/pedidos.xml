@@ -6,12 +6,21 @@
         android:id="@+id/action_settings"
         android:orderInCategory="100"
         android:showAsAction="never"
-        android:title="@string/action_settings"/>  
-        
+        android:title="@string/action_settings"/>
     <item
         android:id="@+id/pedido"
         android:orderInCategory="100"
         android:showAsAction="ifRoom"
-        android:title="@string/menu_pedidos_tomarPedido"/> 
+        android:title="@string/menu_pedidos_tomarPedido"/>
+    <item
+        android:id="@+id/borrarPedido"
+        android:orderInCategory="100"
+        android:showAsAction="ifRoom"
+        android:title="@string/menu_pedidos_EliminarPedido"/>
+    <item
+        android:id="@+id/facturarMesa"
+        android:orderInCategory="100"
+        android:showAsAction="ifRoom"
+        android:title="@string/menu_pedidos_Facturar"/>
 
 </menu>

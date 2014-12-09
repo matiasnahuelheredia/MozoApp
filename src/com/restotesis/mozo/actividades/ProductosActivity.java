@@ -28,7 +28,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
 
 public class ProductosActivity extends Activity {
 
@@ -42,9 +41,10 @@ public class ProductosActivity extends Activity {
 	private int PEDIDO_SINMODIFICAION = 0;
 
 	private DrawerLayout mDrawer;
-	private ListView mDrawerOptions;	
-	private static final String[] valuesA = { "DrawerA 1", "DrawerA 2",
-			"DrawerA 3" };	
+	private ListView mDrawerOptions;
+	private String[] agregar;
+	private String[] eliminar;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -58,20 +58,92 @@ public class ProductosActivity extends Activity {
 				arregloProductos);
 		lstView = (ListView) findViewById(R.id.listProductos);
 		lstView.setAdapter(adaptadorProductos);
-		/* Probando  Drawer Navigation*/
+		/* Probando Drawer Navigation */
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 		getActionBar().setHomeButtonEnabled(true);
+		agregar = getResources().getStringArray(R.array.agregar_aProductos);
+		eliminar = getResources().getStringArray(R.array.eliminar_deProductos);
 		mDrawerOptions = (ListView) findViewById(R.id.left_drawer);
 		mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 		mDrawerOptions.setAdapter(new ArrayAdapter<String>(this,
 				android.R.layout.simple_list_item_1, android.R.id.text1,
-				valuesA));
+				agregar));
 		mDrawerOptions.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				// TODO Auto-generated method stub
+				String eleccion = (String) parent.getAdapter()
+						.getItem(position);
+				if (eleccion.contains("Agregar")) {
+					switch (eleccion) {
+					case "Agregar Bebidas": {
+						realizarPeticion(unPedido.getUrlPedirBebidas(),
+								eleccion);
+					}
+						break;
+					case "Agregar Ofertas": {
+						realizarPeticion(unPedido.getUrlPedirOferta(), eleccion);
+					}
+						break;
+					case "Agregar Menues": {
+						realizarPeticion(unPedido.getUrlTomarMenues(), eleccion);
+					}
+						break;
+					case "Agregar Entrada": {
+						realizarPeticion(unPedido.getUrlPedirPlatosEntrada(),
+								eleccion);
+					}
+						break;
+					case "Agregar Principal": {
+						realizarPeticion(
+								unPedido.getUrlPedirPlatosPrincipales(),
+								eleccion);
+					}
+						break;
+					case "Agregar Guarnicion": {
+						realizarPeticion(unPedido.getUrlPedirGuarniciones(),
+								eleccion);
+					}
+						break;
+					case "Agregar Postre": {
+						realizarPeticion(unPedido.getUrlPedirPostres(),
+								eleccion);
+					}
+						break;
+
+					default:
+						break;
+					}
+				} else {
+					switch (eleccion) {
+					case "Eliminar Bebidas": {
+						realizarPeticion(unPedido.getUrlRemoveFromBebidas(),
+								eleccion);
+					}
+						break;
+					case "Eliminar Ofertas": {
+						realizarPeticion(unPedido.getUrlRemoveFromOferta(),
+								eleccion);
+					}
+						break;
+					case "Eliminar Menues": {
+						realizarPeticion(unPedido.getUrlRemoveFromMenues(),
+								eleccion);
+					}
+						break;
+					case "Eliminar de Comanda": {
+						realizarPeticion(unPedido.getUrlRemoveFromComanda(),
+								eleccion);
+					}
+						break;
+
+					default:
+						break;
+					}
+
+				}
 				mDrawer.closeDrawers();
 			}
 		});
@@ -89,10 +161,20 @@ public class ProductosActivity extends Activity {
 		arregloElecciones = new ArrayList<Eleccion>();
 		int id = item.getItemId();
 		/* Opcion de Abrir el Drawer Navigation */
-		if (id == android.R.id.home) {
+		if (id == R.id.agregar) {
 			mDrawerOptions.setAdapter(new ArrayAdapter<String>(this,
 					android.R.layout.simple_list_item_1, android.R.id.text1,
-					valuesA));
+					agregar));
+			if (mDrawer.isDrawerOpen(mDrawerOptions)) {
+				mDrawer.closeDrawers();
+			} else {
+				mDrawer.openDrawer(mDrawerOptions);
+			}
+		}
+		if (id == R.id.eliminar) {
+			mDrawerOptions.setAdapter(new ArrayAdapter<String>(this,
+					android.R.layout.simple_list_item_1, android.R.id.text1,
+					eliminar));
 			if (mDrawer.isDrawerOpen(mDrawerOptions)) {
 				mDrawer.closeDrawers();
 			} else {
@@ -100,114 +182,6 @@ public class ProductosActivity extends Activity {
 			}
 		}
 		/* Fin opcion abrir Drawer Navigation */
-		if (id == R.id.action_settings) {
-			return true;
-		}
-		if (id == R.id.bebidas) {
-			JsonObjectRequest solicitudEleccion = new JsonObjectRequest(
-					Request.Method.GET, unPedido.getUrlPedirBebidas(), null,
-					new Response.Listener<JSONObject>() {
-
-						@Override
-						public void onResponse(JSONObject response) {
-							// TODO Auto-generated method stub
-							parseJSONChoices(response);
-							Bundle bundle = new Bundle();
-							bundle.putParcelableArrayList("listaElecciones",
-									arregloElecciones);
-							bundle.putParcelable("elPedido", unPedido);
-							Intent intent = new Intent(ProductosActivity.this,
-									EleccionActivity.class);
-							intent.putExtras(bundle);
-							System.out.println("entroooo");
-							startActivityForResult(intent, 0);
-						}
-					}, new Response.ErrorListener() {
-
-						@Override
-						public void onErrorResponse(VolleyError error) {
-							// TODO Auto-generated method stub
-							System.out.println("No entrooo");
-						}
-					}) {
-
-				@Override
-				public Map<String, String> getHeaders() throws AuthFailureError {
-					// TODO Auto-generated method stub
-					return Conexion.createBasicAuthHeader();
-				}
-
-			};
-			colaSolicitud.add(solicitudEleccion);
-
-			return true;
-		}
-		if (id == R.id.eliminarBebidas) {
-			JsonObjectRequest solicitudEleccion = new JsonObjectRequest(
-					Request.Method.GET, unPedido.getUrlRemoveFromBebidas(),
-					null, new Response.Listener<JSONObject>() {
-
-						@Override
-						public void onResponse(JSONObject response) {
-							// TODO Auto-generated method stub
-							parseJSONRemoveChoices(response);
-							Bundle bundle = new Bundle();
-							bundle.putParcelableArrayList("listaElecciones",
-									arregloElecciones);
-							bundle.putParcelable("elPedido", unPedido);
-							Intent intent = new Intent(ProductosActivity.this,
-									EleccionActivity.class);
-							intent.putExtras(bundle);
-							System.out.println("entroooo");
-							startActivityForResult(intent, 0);
-
-						}
-					}, new Response.ErrorListener() {
-
-						@Override
-						public void onErrorResponse(VolleyError error) {
-							// TODO Auto-generated method stub
-							System.out.println("No entrooo");
-						}
-					}) {
-
-				@Override
-				public Map<String, String> getHeaders() throws AuthFailureError {
-					// TODO Auto-generated method stub
-					return Conexion.createBasicAuthHeader();
-				}
-
-			};
-			colaSolicitud.add(solicitudEleccion);
-
-		}
-		if (id == R.id.menues) {
-
-			return true;
-
-		}
-
-		if (id == R.id.entrada) {
-
-			return true;
-
-		}
-		if (id == R.id.principal) {
-
-			return true;
-
-		}
-
-		if (id == R.id.guarnicion) {
-
-			return true;
-
-		}
-
-		if (id == R.id.postre) {
-			return true;
-
-		}
 		return super.onOptionsItemSelected(item);
 	}
 
@@ -261,13 +235,18 @@ public class ProductosActivity extends Activity {
 				item = parameters.getJSONObject("postre1");
 				tipo = "postre1";
 			}
-			if (temp.toString().contains("guarnici贸n1")) {
-				item = parameters.getJSONObject("guarnici贸n1");
-				tipo = "guarnici贸n1";
+			if (temp.toString().contains("guarnici髇1")) {
+				item = parameters.getJSONObject("guarnici髇1");
+				tipo = "guarnici髇1";
 			}
 			if (temp.toString().contains("menu1")) {
 				item = parameters.getJSONObject("menu1");
 				tipo = "menu1";
+			}
+
+			if (temp.toString().contains("oferta1")) {
+				item = parameters.getJSONObject("oferta1");
+				tipo = "oferta1";
 			}
 
 			JSONArray choices = item.getJSONArray("choices");
@@ -301,25 +280,18 @@ public class ProductosActivity extends Activity {
 				item = parameters.getJSONObject("bebida");
 				tipo = "bebida";
 			}
-			if (temp.toString().contains("platoEntrada")) {
-				item = parameters.getJSONObject("platoEntrada");
-				tipo = "platoEntrada";
-			}
-			if (temp.toString().contains("platoPrincipal")) {
-				item = parameters.getJSONObject("platoPrincipal");
-				tipo = "platoPrincipal";
-			}
-			if (temp.toString().contains("postre")) {
-				item = parameters.getJSONObject("postre");
-				tipo = "postre";
-			}
-			if (temp.toString().contains("guarnici贸n")) {
-				item = parameters.getJSONObject("guarnici贸n");
-				tipo = "guarnici贸n";
+			if (temp.toString().contains("producto")) {
+				item = parameters.getJSONObject("producto");
+				tipo = "producto";
 			}
 			if (temp.toString().contains("menu")) {
 				item = parameters.getJSONObject("menu");
 				tipo = "menu";
+			}
+
+			if (temp.toString().contains("oferta")) {
+				item = parameters.getJSONObject("oferta");
+				tipo = "oferta";
 			}
 
 			JSONArray choices = item.getJSONArray("choices");
@@ -337,6 +309,48 @@ public class ProductosActivity extends Activity {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	private void realizarPeticion(String urlPeticion, final String tipo) {
+		JsonObjectRequest solicitudEleccion = new JsonObjectRequest(
+				Request.Method.GET, urlPeticion, null,
+				new Response.Listener<JSONObject>() {
+
+					@Override
+					public void onResponse(JSONObject response) {
+						// TODO Auto-generated method stub
+						if (tipo.contains("Eliminar")) {
+							parseJSONRemoveChoices(response);
+						} else {
+							parseJSONChoices(response);
+						}
+						Bundle bundle = new Bundle();
+						bundle.putParcelableArrayList("listaElecciones",
+								arregloElecciones);
+						bundle.putParcelable("elPedido", unPedido);
+						Intent intent = new Intent(ProductosActivity.this,
+								EleccionActivity.class);
+						intent.putExtras(bundle);
+						System.out.println("entroooo");
+						startActivityForResult(intent, 0);
+					}
+				}, new Response.ErrorListener() {
+
+					@Override
+					public void onErrorResponse(VolleyError error) {
+						// TODO Auto-generated method stub
+						System.out.println("No entrooo");
+					}
+				}) {
+
+			@Override
+			public Map<String, String> getHeaders() throws AuthFailureError {
+				// TODO Auto-generated method stub
+				return Conexion.createBasicAuthHeader();
+			}
+
+		};
+		colaSolicitud.add(solicitudEleccion);
 	}
 
 }

@@ -178,6 +178,15 @@ public class EleccionActivity extends Activity {
 				unProducto.setUrlDetalle(producto.optString("href"));
 				arregloProductos.add(unProducto);
 			}
+			JSONObject ofertasComanda = members.getJSONObject("ofertasComanda");
+			JSONArray valueOfertas = ofertasComanda.getJSONArray("value");
+			for (int l = 0; l < valueOfertas.length(); l++) {
+				JSONObject producto = valueOfertas.getJSONObject(l);
+				Producto unProducto = new Producto();
+				unProducto.setTitle(producto.optString("title"));
+				unProducto.setUrlDetalle(producto.optString("href"));
+				arregloProductos.add(unProducto);
+			}
 			unPedido.setListaProductos(arregloProductos);
 			if (unPedido.getListaProductos().isEmpty()){
 				unPedido.setTitle(json.getJSONObject("result").optString("title"));

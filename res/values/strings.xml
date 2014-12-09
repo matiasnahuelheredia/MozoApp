@@ -9,23 +9,41 @@
     <string name="title_activity_auxiliar">Auxiliar</string>
     <string name="title_activity_mesa">Mesas</string>
     <string name="title_activity_productos">Productos</string>
+    
     <string name="menu_productos_bebidas">Bebidas</string>    
     <string name="menu_productos_entrada">Entrada</string>
     <string name="menu_productos_principal">Principal</string>
     <string name="menu_productos_postre">Postre</string>
     <string name="menu_productos_guarnicion">Guarnicion</string>
     <string name="menu_productos_menues">Menues</string>
-    <string name="menu_productos_Ofertas">Ofertas</string>
-    <string name="menu_pedidos_tomarPedido">Pedido</string>    
+    <string name="menu_productos_Ofertas">Ofertas</string>        
     <string name="menu_productos_EliminarBebidas">Elimiar Bebidas</string>
     <string name="menu_productos_EliminarEntrada">Entrada</string>
     <string name="menu_productos_EliminarPrincipal">Principal</string>
     <string name="menu_productos_EliminarPostre">Postre</string>
     <string name="menu_productos_EliminarGuarnicion">Guarnicion</string>
     <string name="menu_productos_EliminarMenues">Menues</string>
-    <string name="menu_productos_EliminarOfertas">Ofertas</string>
-    <string name="menu_pedidos_EliminarPedido">Pedido</string>
-    <string name="menu_mesa_Pedido">Pedido</string>
-    <string name="title_activity_eleccion">Eleccion</string>    
+    <string name="menu_productos_EliminarOfertas">Ofertas</string>    
+    <string name="menu_pedidos_EliminarPedido">Borrar Pedido</string>
+    <string name="menu_pedidos_tomarPedido">Agregar Pedido</string>
+    <string name="menu_pedidos_Facturar">Facturar</string>
+    <string name="title_activity_eleccion">Eleccion</string>   
+    <string name="menu_productos_eliminar">Eliminar</string>
+    <string name="menu_productos_Agregar">Agregar</string> 
+     <string-array name="agregar_aProductos">
+        <item>Agregar Bebidas</item>
+        <item>Agregar Ofertas</item>
+        <item>Agregar Menues</item>
+        <item>Agregar Entrada</item>
+        <item>Agregar Principal</item>
+        <item>Agregar Guarnicion</item>
+        <item>Agregar Postre</item>        
+    </string-array>
+    <string-array name="eliminar_deProductos">
+        <item>Eliminar Bebidas</item>
+        <item>Eliminar Ofertas</item>
+        <item>Eliminar Menues</item>
+        <item>Eliminar de Comanda</item>
+    </string-array>
 
 </resources>

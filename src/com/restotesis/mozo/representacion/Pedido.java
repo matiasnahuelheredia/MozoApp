@@ -21,7 +21,6 @@ public class Pedido implements Parcelable {
 	private String urlRemoveFromOferta;
 	private ArrayList<Producto> listaProductos = new ArrayList<Producto>();
 
-	
 	public Pedido() {
 		super();
 	}
@@ -92,7 +91,6 @@ public class Pedido implements Parcelable {
 		this.listaProductos = listaProductos;
 	}
 
-	
 	public String getTitle() {
 		return title;
 	}
@@ -189,44 +187,6 @@ public class Pedido implements Parcelable {
 		this.urlRemoveFromComanda = urlRemoveFromComanda;
 	}
 
-//	public void llenarLinks(JSONObject jsonResult) {
-//		JSONObject members;
-//		try {
-//			members = jsonResult.getJSONObject("members");
-//			this.setUrlPedirBebidas(setearURL("pedirBebidas", members));
-//			this.setUrlRemoveFromBebidas(setearURL("removeFromBebidas", members));
-//			this.setUrlEnviar(setearURL("enviar", members));
-//			this.setUrlTomarMenues(setearURL("tomarMenues", members));
-//			this.setUrlRemoveFromMenues(setearURL("removeFromMenues", members));
-//			this.setUrlPedirPlatosEntrada(setearURL("pedirPlatosEntrada",
-//					members));
-//			this.setUrlPedirPlatosPrincipales(setearURL(
-//					"pedirPlatosPrincipales", members));
-//			this.setUrlPedirGuarniciones(setearURL("pedirGuarniciones", members));
-//			this.setUrlPedirPostres(setearURL("pedirPostres", members));
-//			this.setUrlRemoveFromComanda(setearURL("removeFromComanda", members));
-//		} catch (JSONException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//
-//	}
-
-//	private String setearURL(String accion, JSONObject unJSONObject) {
-//
-//		try {
-//			JSONObject accionDo = unJSONObject.getJSONObject(accion);
-//			JSONArray linkDo = accionDo.getJSONArray("links");
-//			JSONObject arregloDo = linkDo.getJSONObject(0);
-//			return arregloDo.optString("href");
-//		} catch (JSONException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		return null;
-//	}
-	
-
 	public String getUrlPedirOferta() {
 		return urlPedirOferta;
 	}
@@ -260,7 +220,5 @@ public class Pedido implements Parcelable {
 		// TODO Auto-generated method stub
 		return super.toString();
 	}
-	
-	
 
 }

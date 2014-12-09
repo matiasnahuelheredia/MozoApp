@@ -16,7 +16,6 @@ public class PedidoAdapter extends BaseAdapter {
 
 	static class ViewHolder {
 		TextView tvNumeroPedido;
-		TextView tvEstado;
 	}
 
 	private static final String TAG = "CustomAdapter";
@@ -58,8 +57,6 @@ public class PedidoAdapter extends BaseAdapter {
 			holder = new ViewHolder();
 			holder.tvNumeroPedido = (TextView) convertView
 					.findViewById(R.id.tvNumeroPedido);
-			holder.tvEstado = (TextView) convertView
-					.findViewById(R.id.tvEstado);
 			convertView.setTag(holder);
 
 		} else
@@ -69,7 +66,8 @@ public class PedidoAdapter extends BaseAdapter {
 		return convertView;
 
 	}
-	public void actualizar(ArrayList<Pedido> datos){
+
+	public void actualizar(ArrayList<Pedido> datos) {
 		this.datos = datos;
 	}
 
