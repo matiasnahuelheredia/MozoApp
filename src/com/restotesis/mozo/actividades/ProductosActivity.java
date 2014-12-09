@@ -20,12 +20,18 @@ import com.restotesis.mozo.representacion.Producto;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
-public class ProductosActivity extends Activity{
-	
+public class ProductosActivity extends Activity {
+
 	private ListView lstView;
 	private ArrayList<Producto> arregloProductos;
 	private ArrayList<Eleccion> arregloElecciones;
@@ -35,6 +41,10 @@ public class ProductosActivity extends Activity{
 	private int PEDIDO_MODIFICADO = 1;
 	private int PEDIDO_SINMODIFICAION = 0;
 
+	private DrawerLayout mDrawer;
+	private ListView mDrawerOptions;	
+	private static final String[] valuesA = { "DrawerA 1", "DrawerA 2",
+			"DrawerA 3" };	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -48,7 +58,24 @@ public class ProductosActivity extends Activity{
 				arregloProductos);
 		lstView = (ListView) findViewById(R.id.listProductos);
 		lstView.setAdapter(adaptadorProductos);
-		
+		/* Probando  Drawer Navigation*/
+		getActionBar().setDisplayHomeAsUpEnabled(true);
+		getActionBar().setHomeButtonEnabled(true);
+		mDrawerOptions = (ListView) findViewById(R.id.left_drawer);
+		mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+		mDrawerOptions.setAdapter(new ArrayAdapter<String>(this,
+				android.R.layout.simple_list_item_1, android.R.id.text1,
+				valuesA));
+		mDrawerOptions.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				// TODO Auto-generated method stub
+				mDrawer.closeDrawers();
+			}
+		});
+		/* Fin Drawer Navigation */
 	}
 
 	@Override
@@ -61,10 +88,21 @@ public class ProductosActivity extends Activity{
 	public boolean onOptionsItemSelected(MenuItem item) {
 		arregloElecciones = new ArrayList<Eleccion>();
 		int id = item.getItemId();
+		/* Opcion de Abrir el Drawer Navigation */
+		if (id == android.R.id.home) {
+			mDrawerOptions.setAdapter(new ArrayAdapter<String>(this,
+					android.R.layout.simple_list_item_1, android.R.id.text1,
+					valuesA));
+			if (mDrawer.isDrawerOpen(mDrawerOptions)) {
+				mDrawer.closeDrawers();
+			} else {
+				mDrawer.openDrawer(mDrawerOptions);
+			}
+		}
+		/* Fin opcion abrir Drawer Navigation */
 		if (id == R.id.action_settings) {
 			return true;
 		}
-
 		if (id == R.id.bebidas) {
 			JsonObjectRequest solicitudEleccion = new JsonObjectRequest(
 					Request.Method.GET, unPedido.getUrlPedirBebidas(), null,
@@ -83,7 +121,6 @@ public class ProductosActivity extends Activity{
 							intent.putExtras(bundle);
 							System.out.println("entroooo");
 							startActivityForResult(intent, 0);
-
 						}
 					}, new Response.ErrorListener() {
 
@@ -105,10 +142,10 @@ public class ProductosActivity extends Activity{
 
 			return true;
 		}
-		if (id == R.id.eliminarBebidas){
+		if (id == R.id.eliminarBebidas) {
 			JsonObjectRequest solicitudEleccion = new JsonObjectRequest(
-					Request.Method.GET, unPedido.getUrlRemoveFromBebidas(), null,
-					new Response.Listener<JSONObject>() {
+					Request.Method.GET, unPedido.getUrlRemoveFromBebidas(),
+					null, new Response.Listener<JSONObject>() {
 
 						@Override
 						public void onResponse(JSONObject response) {
@@ -142,7 +179,7 @@ public class ProductosActivity extends Activity{
 
 			};
 			colaSolicitud.add(solicitudEleccion);
-			
+
 		}
 		if (id == R.id.menues) {
 
@@ -180,16 +217,16 @@ public class ProductosActivity extends Activity{
 		switch (requestCode) {
 		case (0): {
 			if (resultCode == Activity.RESULT_OK) {
-				unPedido = data.getExtras().getParcelable(
-						"pedidoActualizado");				
+				unPedido = data.getExtras().getParcelable("pedidoActualizado");
 				adaptadorProductos.actualizar(unPedido.getListaProductos());
-				adaptadorProductos.notifyDataSetChanged();				
+				adaptadorProductos.notifyDataSetChanged();
 				Bundle bundle = new Bundle();
-				bundle.putParcelable("pedidoActualizado",unPedido);
-				bundle.putInt("posicion", getIntent().getExtras().getInt("posicion"));
+				bundle.putParcelable("pedidoActualizado", unPedido);
+				bundle.putInt("posicion",
+						getIntent().getExtras().getInt("posicion"));
 				Intent intentRegreso = new Intent();
 				intentRegreso.putExtras(bundle);
-				setResult(PEDIDO_MODIFICADO,intentRegreso);
+				setResult(PEDIDO_MODIFICADO, intentRegreso);
 				System.out.println("Result OK");
 			}
 			break;
@@ -249,7 +286,7 @@ public class ProductosActivity extends Activity{
 			e.printStackTrace();
 		}
 	}
-	
+
 	private void parseJSONRemoveChoices(JSONObject json) {
 		try {
 
