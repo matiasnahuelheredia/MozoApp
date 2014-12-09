@@ -1,9 +1,6 @@
 package com.restotesis.mozo.representacion;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import java.util.ArrayList;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -20,7 +17,11 @@ public class Pedido implements Parcelable {
 	private String urlPedirGuarniciones;
 	private String urlPedirPostres;
 	private String urlRemoveFromComanda;
+	private String urlPedirOferta;
+	private String urlRemoveFromOferta;
+	private ArrayList<Producto> listaProductos = new ArrayList<Producto>();
 
+	
 	public Pedido() {
 		super();
 	}
@@ -39,6 +40,10 @@ public class Pedido implements Parcelable {
 		this.urlPedirGuarniciones = source.readString();
 		this.urlPedirPostres = source.readString();
 		this.urlRemoveFromComanda = source.readString();
+		this.urlPedirOferta = source.readString();
+		this.urlRemoveFromOferta = source.readString();
+		listaProductos = new ArrayList<Producto>();
+		source.readTypedList(listaProductos, Producto.CREATOR);
 
 	}
 
@@ -73,9 +78,21 @@ public class Pedido implements Parcelable {
 		dest.writeString(urlPedirGuarniciones);
 		dest.writeString(urlPedirPostres);
 		dest.writeString(urlRemoveFromComanda);
+		dest.writeString(urlPedirOferta);
+		dest.writeString(urlRemoveFromOferta);
+		dest.writeTypedList(listaProductos);
 
 	}
 
+	public ArrayList<Producto> getListaProductos() {
+		return listaProductos;
+	}
+
+	public void setListaProductos(ArrayList<Producto> listaProductos) {
+		this.listaProductos = listaProductos;
+	}
+
+	
 	public String getTitle() {
 		return title;
 	}
@@ -171,40 +188,79 @@ public class Pedido implements Parcelable {
 	public void setUrlRemoveFromComanda(String urlRemoveFromComanda) {
 		this.urlRemoveFromComanda = urlRemoveFromComanda;
 	}
-	public void llenarLinks(JSONObject jsonResult){
-		JSONObject members;
-		try {
-			members = jsonResult.getJSONObject("members");
-			this.setUrlPedirBebidas(setearURL("pedirBebidas", members));
-			this.setUrlRemoveFromBebidas(setearURL("removeFromBebidas", members));
-			this.setUrlEnviar(setearURL("enviar", members));
-			this.setUrlTomarMenues(setearURL("tomarMenues", members));
-			this.setUrlRemoveFromMenues(setearURL("removeFromMenues", members));
-			this.setUrlPedirPlatosEntrada(setearURL("pedirPlatosEntrada",
-					members));
-			this.setUrlPedirPlatosPrincipales(setearURL(
-					"pedirPlatosPrincipales", members));
-			this.setUrlPedirGuarniciones(setearURL("pedirGuarniciones", members));
-			this.setUrlPedirPostres(setearURL("pedirPostres", members));
-			this.setUrlRemoveFromComanda(setearURL("removeFromComanda", members));
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
+
+//	public void llenarLinks(JSONObject jsonResult) {
+//		JSONObject members;
+//		try {
+//			members = jsonResult.getJSONObject("members");
+//			this.setUrlPedirBebidas(setearURL("pedirBebidas", members));
+//			this.setUrlRemoveFromBebidas(setearURL("removeFromBebidas", members));
+//			this.setUrlEnviar(setearURL("enviar", members));
+//			this.setUrlTomarMenues(setearURL("tomarMenues", members));
+//			this.setUrlRemoveFromMenues(setearURL("removeFromMenues", members));
+//			this.setUrlPedirPlatosEntrada(setearURL("pedirPlatosEntrada",
+//					members));
+//			this.setUrlPedirPlatosPrincipales(setearURL(
+//					"pedirPlatosPrincipales", members));
+//			this.setUrlPedirGuarniciones(setearURL("pedirGuarniciones", members));
+//			this.setUrlPedirPostres(setearURL("pedirPostres", members));
+//			this.setUrlRemoveFromComanda(setearURL("removeFromComanda", members));
+//		} catch (JSONException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//
+//	}
+
+//	private String setearURL(String accion, JSONObject unJSONObject) {
+//
+//		try {
+//			JSONObject accionDo = unJSONObject.getJSONObject(accion);
+//			JSONArray linkDo = accionDo.getJSONArray("links");
+//			JSONObject arregloDo = linkDo.getJSONObject(0);
+//			return arregloDo.optString("href");
+//		} catch (JSONException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+//		return null;
+//	}
+	
+
+	public String getUrlPedirOferta() {
+		return urlPedirOferta;
 	}
 
-	private String setearURL(String accion, JSONObject unJSONObject) {
-
-		try {
-			JSONObject accionDo = unJSONObject.getJSONObject(accion);
-			JSONArray linkDo = accionDo.getJSONArray("links");
-			JSONObject arregloDo = linkDo.getJSONObject(0);
-			return arregloDo.optString("href");
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return null;
+	public void setUrlPedirOferta(String urlPedirOferta) {
+		this.urlPedirOferta = urlPedirOferta;
 	}
+
+	public String getUrlRemoveFromOferta() {
+		return urlRemoveFromOferta;
+	}
+
+	public void setUrlRemoveFromOferta(String urlRemoveFromOferta) {
+		this.urlRemoveFromOferta = urlRemoveFromOferta;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		// TODO Auto-generated method stub
+		return super.equals(o);
+	}
+
+	@Override
+	public int hashCode() {
+		// TODO Auto-generated method stub
+		return super.hashCode();
+	}
+
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return super.toString();
+	}
+	
+	
+
 }

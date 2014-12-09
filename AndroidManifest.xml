@@ -37,11 +37,7 @@
         <activity
             android:name=".actividades.EleccionActivity"
             android:label="@string/title_activity_eleccion" >
-        </activity>
-        <activity
-            android:name=".actividades.EliminarProductoActivity"
-            android:label="@string/title_activity_eliminar_producto" >
-        </activity>
+        </activity>       
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" >

@@ -25,29 +25,31 @@ import android.view.MenuItem;
 import android.widget.ListView;
 
 public class ProductosActivity extends Activity {
-	
+
 	private ListView lstView;
 	private ArrayList<Producto> arregloProductos;
 	private ArrayList<Eleccion> arregloElecciones;
 	private ProductoAdapter adaptadorProductos;
-	private Pedido unPedido;		
+	private Pedido unPedido;
 	private RequestQueue colaSolicitud;
+	private int PEDIDO_MODIFICADO = 1;
+	private int PEDIDO_SINMODIFICAION = 0;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_productos);
-		colaSolicitud = Conexion.getInstance(
-				getApplicationContext()).getRequestQueue();
+		colaSolicitud = Conexion.getInstance(getApplicationContext())
+				.getRequestQueue();
 		arregloProductos = new ArrayList<Producto>();
-//		arregloElecciones = new ArrayList<Eleccion>();
-		arregloProductos = getIntent().getExtras().getParcelableArrayList(
-				"listaProductos");
+		unPedido = getIntent().getExtras().getParcelable("elPedido");
+		arregloProductos = unPedido.getListaProductos();
 		adaptadorProductos = new ProductoAdapter(getApplicationContext(),
 				arregloProductos);
 		lstView = (ListView) findViewById(R.id.listProductos);
 		lstView.setAdapter(adaptadorProductos);
-		unPedido = getIntent().getExtras().getParcelable("elPedido");
-	}			
+		
+	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -56,87 +58,117 @@ public class ProductosActivity extends Activity {
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {	
+	public boolean onOptionsItemSelected(MenuItem item) {
 		arregloElecciones = new ArrayList<Eleccion>();
 		int id = item.getItemId();
 		if (id == R.id.action_settings) {
 			return true;
 		}
 
-		if (id == R.id.bebidas) {			
-			JsonObjectRequest solicitudEleccion = new JsonObjectRequest(Request.Method.GET, 
-					unPedido.getUrlPedirBebidas(), null, 
+		if (id == R.id.bebidas) {
+			JsonObjectRequest solicitudEleccion = new JsonObjectRequest(
+					Request.Method.GET, unPedido.getUrlPedirBebidas(), null,
 					new Response.Listener<JSONObject>() {
 
 						@Override
 						public void onResponse(JSONObject response) {
 							// TODO Auto-generated method stub
-							parseJSONChoices(response);	
+							parseJSONChoices(response);
 							Bundle bundle = new Bundle();
-							bundle.putParcelableArrayList("listaElecciones", arregloElecciones);
-							bundle.putParcelableArrayList("listaProductos", arregloProductos);
-							Intent intent = new Intent(ProductosActivity.this, EleccionActivity.class);
+							bundle.putParcelableArrayList("listaElecciones",
+									arregloElecciones);
+							bundle.putParcelable("elPedido", unPedido);
+							Intent intent = new Intent(ProductosActivity.this,
+									EleccionActivity.class);
 							intent.putExtras(bundle);
 							System.out.println("entroooo");
-							startActivityForResult(intent,0);
-							
+							startActivityForResult(intent, 0);
+
 						}
-					}, 
-					new Response.ErrorListener() {
+					}, new Response.ErrorListener() {
 
 						@Override
 						public void onErrorResponse(VolleyError error) {
 							// TODO Auto-generated method stub
 							System.out.println("No entrooo");
 						}
-					}){
+					}) {
+
+				@Override
+				public Map<String, String> getHeaders() throws AuthFailureError {
+					// TODO Auto-generated method stub
+					return Conexion.createBasicAuthHeader();
+				}
+
+			};
+			colaSolicitud.add(solicitudEleccion);
+
+			return true;
+		}
+		if (id == R.id.eliminarBebidas){
+			JsonObjectRequest solicitudEleccion = new JsonObjectRequest(
+					Request.Method.GET, unPedido.getUrlRemoveFromBebidas(), null,
+					new Response.Listener<JSONObject>() {
 
 						@Override
-						public Map<String, String> getHeaders()
-								throws AuthFailureError {
+						public void onResponse(JSONObject response) {
 							// TODO Auto-generated method stub
-							return Conexion.createBasicAuthHeader();
+							parseJSONRemoveChoices(response);
+							Bundle bundle = new Bundle();
+							bundle.putParcelableArrayList("listaElecciones",
+									arregloElecciones);
+							bundle.putParcelable("elPedido", unPedido);
+							Intent intent = new Intent(ProductosActivity.this,
+									EleccionActivity.class);
+							intent.putExtras(bundle);
+							System.out.println("entroooo");
+							startActivityForResult(intent, 0);
+
 						}
-				
-				
+					}, new Response.ErrorListener() {
+
+						@Override
+						public void onErrorResponse(VolleyError error) {
+							// TODO Auto-generated method stub
+							System.out.println("No entrooo");
+						}
+					}) {
+
+				@Override
+				public Map<String, String> getHeaders() throws AuthFailureError {
+					// TODO Auto-generated method stub
+					return Conexion.createBasicAuthHeader();
+				}
+
 			};
 			colaSolicitud.add(solicitudEleccion);
 			
-			return true;
 		}
 		if (id == R.id.menues) {
-			
-			
 
 			return true;
 
 		}
 
 		if (id == R.id.entrada) {
-			
-			
 
 			return true;
 
 		}
 		if (id == R.id.principal) {
-			
-			
 
 			return true;
 
 		}
 
 		if (id == R.id.guarnicion) {
-			
-			
 
 			return true;
 
 		}
 
 		if (id == R.id.postre) {
-						return true;
+			return true;
 
 		}
 		return super.onOptionsItemSelected(item);
@@ -148,49 +180,30 @@ public class ProductosActivity extends Activity {
 		switch (requestCode) {
 		case (0): {
 			if (resultCode == Activity.RESULT_OK) {
-				 JsonObjectRequest solicitudProductosUp = new JsonObjectRequest(Request.Method.GET, unPedido.getUrlDetalle(), null, 
-						 new Response.Listener<JSONObject>() {
-
-							@Override
-							public void onResponse(JSONObject response) {
-								// TODO Auto-generated method stub
-								parseJSON(response);								
-								adaptadorProductos.actualizar(arregloProductos);
-								adaptadorProductos.notifyDataSetChanged();
-								System.out.println("Result OK");								
-							}
-						}, new Response.ErrorListener() {
-
-							@Override
-							public void onErrorResponse(VolleyError error) {
-								// TODO Auto-generated method stub
-								System.out.println("Result Negative");
-								
-							}
-						}){
-
-							@Override
-							public Map<String, String> getHeaders()
-									throws AuthFailureError {
-								// TODO Auto-generated method stub
-								return Conexion.createBasicAuthHeader();
-							}
-					 
-					 
-				 };	
-				 colaSolicitud.add(solicitudProductosUp);
+				unPedido = data.getExtras().getParcelable(
+						"pedidoActualizado");				
+				adaptadorProductos.actualizar(unPedido.getListaProductos());
+				adaptadorProductos.notifyDataSetChanged();				
+				Bundle bundle = new Bundle();
+				bundle.putParcelable("pedidoActualizado",unPedido);
+				bundle.putInt("posicion", getIntent().getExtras().getInt("posicion"));
+				Intent intentRegreso = new Intent();
+				intentRegreso.putExtras(bundle);
+				setResult(PEDIDO_MODIFICADO,intentRegreso);
+				System.out.println("Result OK");
 			}
 			break;
 		}
 		}
 		super.onActivityResult(requestCode, resultCode, data);
 	}
-	
+
 	private void parseJSONChoices(JSONObject json) {
 		try {
-			
+
 			JSONArray links = json.getJSONArray("links");
-			String invokeURL = links.getJSONObject(2).getString("href").toString();
+			String invokeURL = links.getJSONObject(2).getString("href")
+					.toString();
 			JSONObject parameters = json.getJSONObject("parameters");
 			JSONArray temp = parameters.names();
 			JSONObject item = null;
@@ -205,7 +218,7 @@ public class ProductosActivity extends Activity {
 			}
 			if (temp.toString().contains("platoPrincipal1")) {
 				item = parameters.getJSONObject("platoPrincipal1");
-				tipo =  "platoPrincipal1";
+				tipo = "platoPrincipal1";
 			}
 			if (temp.toString().contains("postre1")) {
 				item = parameters.getJSONObject("postre1");
@@ -236,49 +249,57 @@ public class ProductosActivity extends Activity {
 			e.printStackTrace();
 		}
 	}
-	private void parseJSON(JSONObject json) {
-		JSONObject members = null;
+	
+	private void parseJSONRemoveChoices(JSONObject json) {
 		try {
-			arregloProductos = new ArrayList<Producto>();
-			// Con esto obtengo result donde en value tengo la lista d mesas
-			members = json.getJSONObject("members");
-			// Con esto obtengo los title de las mesas
-			JSONObject productosComanda = members
-					.getJSONObject("productosComanda");
-			JSONArray valueProductos = productosComanda.getJSONArray("value");
-			for (int i = 0; i < valueProductos.length(); i++) {
-				JSONObject producto = valueProductos.getJSONObject(i);
-				Producto unProducto = new Producto();
-				unProducto.setTitle(producto.optString("title"));
-				unProducto.setUrlDetalle(producto.optString("href"));
-				arregloProductos.add(unProducto);
+
+			JSONArray links = json.getJSONArray("links");
+			String invokeURL = links.getJSONObject(2).getString("href")
+					.toString();
+			JSONObject parameters = json.getJSONObject("parameters");
+			JSONArray temp = parameters.names();
+			JSONObject item = null;
+			String tipo = null;
+			if (temp.toString().contains("bebida")) {
+				item = parameters.getJSONObject("bebida");
+				tipo = "bebida";
+			}
+			if (temp.toString().contains("platoEntrada")) {
+				item = parameters.getJSONObject("platoEntrada");
+				tipo = "platoEntrada";
+			}
+			if (temp.toString().contains("platoPrincipal")) {
+				item = parameters.getJSONObject("platoPrincipal");
+				tipo = "platoPrincipal";
+			}
+			if (temp.toString().contains("postre")) {
+				item = parameters.getJSONObject("postre");
+				tipo = "postre";
+			}
+			if (temp.toString().contains("guarnición")) {
+				item = parameters.getJSONObject("guarnición");
+				tipo = "guarnición";
+			}
+			if (temp.toString().contains("menu")) {
+				item = parameters.getJSONObject("menu");
+				tipo = "menu";
 			}
 
-			JSONObject bebidasDelPedido = members.getJSONObject("bebidas");
-			JSONArray valueBebidas = bebidasDelPedido.getJSONArray("value");
-			for (int i = 0; i < valueBebidas.length(); i++) {
-				JSONObject producto = valueBebidas.getJSONObject(i);
-				Producto unProducto = new Producto();
-				unProducto.setTitle(producto.optString("title"));
-				unProducto.setUrlDetalle(producto.optString("href"));
-				arregloProductos.add(unProducto);
+			JSONArray choices = item.getJSONArray("choices");
+			for (int i = 0; i < choices.length(); i++) {
+				JSONObject unaOpcion = choices.getJSONObject(i);
+				Eleccion unaEleccion = new Eleccion();
+				unaEleccion.setTitle(unaOpcion.optString("title"));
+				unaEleccion.setUrl(unaOpcion.optString("href"));
+				unaEleccion.setTipo(tipo);
+				unaEleccion.setInvokeURL(invokeURL);
+				arregloElecciones.add(unaEleccion);
 			}
 
-			JSONObject menuesComanda = members.getJSONObject("menuesComanda");
-			JSONArray valueMenues = menuesComanda.getJSONArray("value");
-			for (int i = 0; i < valueMenues.length(); i++) {
-				JSONObject producto = valueMenues.getJSONObject(i);
-				Producto unProducto = new Producto();
-				unProducto.setTitle(producto.optString("title"));
-				unProducto.setUrlDetalle(producto.optString("href"));
-				arregloProductos.add(unProducto);
-			}
-
-		} catch (Exception e) {
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
-	
-	
 }

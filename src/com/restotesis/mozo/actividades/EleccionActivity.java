@@ -2,6 +2,8 @@ package com.restotesis.mozo.actividades;
 
 import java.util.ArrayList;
 import java.util.Map;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import com.android.volley.AuthFailureError;
@@ -14,6 +16,8 @@ import com.restotesis.mozo.R;
 import com.restotesis.mozo.adaptadores.EleccionAdapter;
 import com.restotesis.mozo.networking.Conexion;
 import com.restotesis.mozo.representacion.Eleccion;
+import com.restotesis.mozo.representacion.Pedido;
+import com.restotesis.mozo.representacion.Producto;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -29,6 +33,8 @@ public class EleccionActivity extends Activity {
 
 	private ListView lstView;
 	private ArrayList<Eleccion> arregloElecciones;
+	private ArrayList<Producto> arregloProductos;
+	private Pedido unPedido;
 	private EleccionAdapter eleccionAdapter;
 	private RequestQueue colaSolicitud;
 
@@ -45,6 +51,7 @@ public class EleccionActivity extends Activity {
 				arregloElecciones);
 		lstView = (ListView) findViewById(R.id.listEleccion);
 		lstView.setAdapter(eleccionAdapter);
+		unPedido = getIntent().getExtras().getParcelable("elPedido");
 		lstView.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
@@ -61,7 +68,11 @@ public class EleccionActivity extends Activity {
 							public void onResponse(JSONObject response) {
 								// TODO Auto-generated method stub
 								System.out.println("Entrooo");
+								parseJSON(response);								
+								Bundle bundle = new Bundle();
+								bundle.putParcelable("pedidoActualizado", unPedido);
 								Intent intentRegreso = new Intent();
+								intentRegreso.putExtras(bundle);
 								setResult(RESULT_OK, intentRegreso);
 								finish();
 							}
@@ -125,6 +136,56 @@ public class EleccionActivity extends Activity {
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+	
+	private void parseJSON(JSONObject json) {
+		JSONObject members = null;			
+		arregloProductos = new ArrayList<Producto>();
+		try {			
+			// Con esto obtengo result donde en value tengo la lista d mesas
+			members = json.getJSONObject("result").getJSONObject("members");
+			if (unPedido.getTitle().contains("Vac")){
+				unPedido.setTitle(json.getJSONObject("result").optString("title"));
+			}
+			// Con esto obtengo los title de las mesas
+			JSONObject productosComanda = members
+					.getJSONObject("productosComanda");
+			JSONArray valueProductos = productosComanda.getJSONArray("value");
+			for (int i = 0; i < valueProductos.length(); i++) {
+				JSONObject producto = valueProductos.getJSONObject(i);
+				Producto unProducto = new Producto();
+				unProducto.setTitle(producto.optString("title"));
+				unProducto.setUrlDetalle(producto.optString("href"));
+				arregloProductos.add(unProducto);
+			}
+
+			JSONObject bebidasDelPedido = members.getJSONObject("bebidas");
+			JSONArray valueBebidas = bebidasDelPedido.getJSONArray("value");
+			for (int i = 0; i < valueBebidas.length(); i++) {
+				JSONObject producto = valueBebidas.getJSONObject(i);
+				Producto unProducto = new Producto();
+				unProducto.setTitle(producto.optString("title"));
+				unProducto.setUrlDetalle(producto.optString("href"));
+				arregloProductos.add(unProducto);
+			}
+
+			JSONObject menuesComanda = members.getJSONObject("menuesComanda");
+			JSONArray valueMenues = menuesComanda.getJSONArray("value");
+			for (int i = 0; i < valueMenues.length(); i++) {
+				JSONObject producto = valueMenues.getJSONObject(i);
+				Producto unProducto = new Producto();
+				unProducto.setTitle(producto.optString("title"));
+				unProducto.setUrlDetalle(producto.optString("href"));
+				arregloProductos.add(unProducto);
+			}
+			unPedido.setListaProductos(arregloProductos);
+			if (unPedido.getListaProductos().isEmpty()){
+				unPedido.setTitle(json.getJSONObject("result").optString("title"));
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 }

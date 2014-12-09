@@ -11,15 +11,12 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.restotesis.mozo.R;
-import com.restotesis.mozo.adaptadores.MesaAdapter;
 import com.restotesis.mozo.networking.Conexion;
 import com.restotesis.mozo.representacion.Mesa;
-
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,16 +27,11 @@ import android.widget.Toast;
 
 public class Login extends Activity {
 
-	String usuario;
-	String password;
-	String url = ":8080/resto-webapp/restful/services/dom.mesa.MesaServicio/actions/listarMesasAsignadas/invoke";
-	ArrayList<Mesa> mesasAsignadas = new ArrayList<Mesa>();
-	EditText txtIpserver;
-	EditText txtUsuario;
-	EditText txtPassword;
-	private String TAG = this.getClass().getSimpleName();
-	MesaAdapter adaptadorMesa;
-	ArrayList<Mesa> arregloMesas;
+	private String url = ":8080/resto-webapp/restful/services/dom.mesa.MesaServicio/actions/listarMesasAsignadas/invoke";
+	private EditText txtIpserver;
+	private EditText txtUsuario;
+	private EditText txtPassword;
+	private ArrayList<Mesa> arregloMesas;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -56,22 +48,17 @@ public class Login extends Activity {
 
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				url = txtIpserver.getText().toString().concat(url);
-				usuario = txtUsuario.getText().toString();
-				password = txtPassword.getText().toString();
-				Conexion.setUser(usuario);
-				Conexion.setPassword(password);
+				// TODO Auto-generated method stub					
+				Conexion.setUser(txtUsuario.getText().toString());
+				Conexion.setPassword(txtPassword.getText().toString());
 				final ProgressDialog pd = ProgressDialog.show(Login.this,
 						"Aguarde por favor...", "Aguarde por favor...");
 				JsonObjectRequest solicitudMesas = new JsonObjectRequest(
-						Request.Method.GET, url, null,
+						Request.Method.GET,txtIpserver.getText().toString().concat(url) , null,
 						new Response.Listener<JSONObject>() {
 							@Override
 							public void onResponse(JSONObject response) {
-
-								Log.i(TAG, response.toString());
-								System.out.println("Entrooooo");
+															
 								parseJSON(response);
 								Bundle parametros = new Bundle();
 								parametros.putParcelableArrayList(
@@ -85,14 +72,11 @@ public class Login extends Activity {
 							}
 						}, new Response.ErrorListener() {
 							@Override
-							public void onErrorResponse(VolleyError error) {
-								System.out.println("NOoooooo Entrooooo");
+							public void onErrorResponse(VolleyError error) {								
 								pd.dismiss();
 								Toast.makeText(getApplicationContext(),
 										"Combinacion User/Password Invalida",
-										Toast.LENGTH_LONG).show();
-								
-								Log.i(TAG, error.getMessage());
+										Toast.LENGTH_LONG).show();															
 							}
 						}) {
 
