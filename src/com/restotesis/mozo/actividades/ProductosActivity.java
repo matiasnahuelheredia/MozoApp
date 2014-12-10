@@ -39,11 +39,12 @@ public class ProductosActivity extends Activity {
 	private RequestQueue colaSolicitud;
 	private int PEDIDO_MODIFICADO = 1;
 	private int PEDIDO_SINMODIFICAION = 0;
-
+	private String enviar = null;
 	private DrawerLayout mDrawer;
 	private ListView mDrawerOptions;
 	private String[] agregar;
 	private String[] eliminar;
+	private int codigoSolicitud = 0;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -182,29 +183,32 @@ public class ProductosActivity extends Activity {
 			}
 		}
 		/* Fin opcion abrir Drawer Navigation */
+		if (id == R.id.enviarPedido) {
+
+			realizarPeticion(unPedido.getUrlEnviar(), "Enviar");
+
+		}
 		return super.onOptionsItemSelected(item);
 	}
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		// TODO Auto-generated method stub
-		switch (requestCode) {
-		case (0): {
-			if (resultCode == Activity.RESULT_OK) {
-				unPedido = data.getExtras().getParcelable("pedidoActualizado");
-				adaptadorProductos.actualizar(unPedido.getListaProductos());
-				adaptadorProductos.notifyDataSetChanged();
-				Bundle bundle = new Bundle();
-				bundle.putParcelable("pedidoActualizado", unPedido);
-				bundle.putInt("posicion",
-						getIntent().getExtras().getInt("posicion"));
-				Intent intentRegreso = new Intent();
-				intentRegreso.putExtras(bundle);
-				setResult(PEDIDO_MODIFICADO, intentRegreso);
-				System.out.println("Result OK");
+		if (resultCode == RESULT_OK) {
+			unPedido = data.getExtras().getParcelable("pedidoActualizado");
+			adaptadorProductos.actualizar(unPedido.getListaProductos());
+			adaptadorProductos.notifyDataSetChanged();
+			Bundle bundle = new Bundle();
+			bundle.putParcelable("pedidoActualizado", unPedido);
+			bundle.putInt("posicion", getIntent().getExtras()
+					.getInt("posicion"));
+			Intent intentRegreso = new Intent();
+			intentRegreso.putExtras(bundle);
+			setResult(PEDIDO_MODIFICADO, intentRegreso);
+			System.out.println("Result OK");
+			if (requestCode == 1) {
+				finish();
 			}
-			break;
-		}
 		}
 		super.onActivityResult(requestCode, resultCode, data);
 	}
@@ -321,18 +325,35 @@ public class ProductosActivity extends Activity {
 						// TODO Auto-generated method stub
 						if (tipo.contains("Eliminar")) {
 							parseJSONRemoveChoices(response);
-						} else {
+						}
+						if (tipo.contains("Agregar")) {
 							parseJSONChoices(response);
+						}
+						if (tipo.contains("Enviar")) {
+							try {
+								enviar = response.getJSONArray("links")
+										.getJSONObject(2).optString("href");
+							} catch (JSONException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+							/*
+							 * Para notificar al onActivityResult sobre que se
+							 * trato de enviar una Comanda/Pedido
+							 */
+							codigoSolicitud = 1;
 						}
 						Bundle bundle = new Bundle();
 						bundle.putParcelableArrayList("listaElecciones",
 								arregloElecciones);
 						bundle.putParcelable("elPedido", unPedido);
+						bundle.putString("enviar", enviar);
 						Intent intent = new Intent(ProductosActivity.this,
 								EleccionActivity.class);
 						intent.putExtras(bundle);
 						System.out.println("entroooo");
-						startActivityForResult(intent, 0);
+						startActivityForResult(intent, codigoSolicitud);
+
 					}
 				}, new Response.ErrorListener() {
 

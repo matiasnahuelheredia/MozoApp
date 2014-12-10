@@ -43,22 +43,22 @@ public class Login extends Activity {
 		Button btnEntrar = (Button) findViewById(R.id.btnEntrar);
 		final RequestQueue colaSolicitud = Conexion.getInstance(
 				getApplicationContext()).getRequestQueue();
-		arregloMesas = new ArrayList<Mesa>();
 		btnEntrar.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
-				// TODO Auto-generated method stub					
+				// TODO Auto-generated method stub
 				Conexion.setUser(txtUsuario.getText().toString());
 				Conexion.setPassword(txtPassword.getText().toString());
 				final ProgressDialog pd = ProgressDialog.show(Login.this,
 						"Aguarde por favor...", "Aguarde por favor...");
 				JsonObjectRequest solicitudMesas = new JsonObjectRequest(
-						Request.Method.GET,txtIpserver.getText().toString().concat(url) , null,
+						Request.Method.GET, txtIpserver.getText().toString()
+								.concat(url), null,
 						new Response.Listener<JSONObject>() {
 							@Override
 							public void onResponse(JSONObject response) {
-															
+								arregloMesas = new ArrayList<Mesa>();
 								parseJSON(response);
 								Bundle parametros = new Bundle();
 								parametros.putParcelableArrayList(
@@ -72,11 +72,11 @@ public class Login extends Activity {
 							}
 						}, new Response.ErrorListener() {
 							@Override
-							public void onErrorResponse(VolleyError error) {								
+							public void onErrorResponse(VolleyError error) {
 								pd.dismiss();
 								Toast.makeText(getApplicationContext(),
 										"Combinacion User/Password Invalida",
-										Toast.LENGTH_LONG).show();															
+										Toast.LENGTH_LONG).show();
 							}
 						}) {
 
@@ -98,7 +98,6 @@ public class Login extends Activity {
 
 	private void parseJSON(JSONObject json) {
 		try {
-
 			JSONObject result = json.getJSONObject("result");
 			JSONArray value = result.getJSONArray("value");
 			for (int i = 0; i < value.length(); i++) {

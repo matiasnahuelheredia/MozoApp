@@ -19,6 +19,7 @@ public class Pedido implements Parcelable {
 	private String urlRemoveFromComanda;
 	private String urlPedirOferta;
 	private String urlRemoveFromOferta;
+	private String estadocomanda;
 	private ArrayList<Producto> listaProductos = new ArrayList<Producto>();
 
 	public Pedido() {
@@ -41,6 +42,7 @@ public class Pedido implements Parcelable {
 		this.urlRemoveFromComanda = source.readString();
 		this.urlPedirOferta = source.readString();
 		this.urlRemoveFromOferta = source.readString();
+		this.estadocomanda = source.readString();
 		listaProductos = new ArrayList<Producto>();
 		source.readTypedList(listaProductos, Producto.CREATOR);
 
@@ -79,6 +81,7 @@ public class Pedido implements Parcelable {
 		dest.writeString(urlRemoveFromComanda);
 		dest.writeString(urlPedirOferta);
 		dest.writeString(urlRemoveFromOferta);
+		dest.writeString(estadocomanda);
 		dest.writeTypedList(listaProductos);
 
 	}
@@ -219,6 +222,14 @@ public class Pedido implements Parcelable {
 	public String toString() {
 		// TODO Auto-generated method stub
 		return super.toString();
+	}
+
+	public String getEstadocomanda() {
+		return estadocomanda;
+	}
+
+	public void setEstadocomanda(String estadocomanda) {
+		this.estadocomanda = estadocomanda;
 	}
 
 }

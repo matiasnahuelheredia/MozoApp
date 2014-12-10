@@ -35,7 +35,7 @@ public class PedidosActivity extends Activity {
 	private ArrayList<Pedido> arregloPedidos;
 	private PedidoAdapter adaptadorPedidos;
 	private RequestQueue colaSolicitud;
-	private static final int PEDIDO_MODIFICADO = 1;	
+	private static final int PEDIDO_MODIFICADO = 1;
 	private static final int PEDIDO = 3;
 
 	@Override
@@ -60,14 +60,12 @@ public class PedidosActivity extends Activity {
 						PedidosActivity.this, "Aguarde por favor...",
 						"Aguarde por favor...");
 				Bundle bundle = new Bundle();
-//				bundle.putParcelableArrayList("listaProductos", arregloPedidos
-//						.get(position).getListaProductos());
 				bundle.putParcelable("elPedido", arregloPedidos.get(position));
 				bundle.putInt("posicion", position);
 				Intent intent = new Intent(PedidosActivity.this,
 						ProductosActivity.class);
 				intent.putExtras(bundle);
-				pd.dismiss();					
+				pd.dismiss();
 				startActivityForResult(intent, PEDIDO);
 
 			}
@@ -281,6 +279,8 @@ public class PedidosActivity extends Activity {
 				unPedido.setUrlTomarMenues(members.getJSONObject("tomarMenues")
 						.getJSONArray("links").getJSONObject(0)
 						.optString("href"));
+				unPedido.setEstadocomanda(members.getJSONObject("comanda")
+						.getJSONObject("value").optString("title"));
 				JSONObject productosComanda = members
 						.getJSONObject("productosComanda");
 				JSONArray valueProductos = productosComanda
@@ -333,11 +333,12 @@ public class PedidosActivity extends Activity {
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		// TODO Auto-generated method stub		
-		if (resultCode == PEDIDO_MODIFICADO) {				
+		// TODO Auto-generated method stub
+		if (resultCode == PEDIDO_MODIFICADO) {
 			int posicion = data.getExtras().getInt("posicion");
-			Pedido nuevoPedido = data.getExtras().getParcelable("pedidoActualizado");
-			arregloPedidos.set(posicion,nuevoPedido);			
+			Pedido nuevoPedido = data.getExtras().getParcelable(
+					"pedidoActualizado");
+			arregloPedidos.set(posicion, nuevoPedido);
 			adaptadorPedidos.actualizar(arregloPedidos);
 			adaptadorPedidos.notifyDataSetChanged();
 		}

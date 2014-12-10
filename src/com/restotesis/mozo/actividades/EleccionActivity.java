@@ -26,6 +26,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
@@ -44,6 +45,20 @@ public class EleccionActivity extends Activity {
 		setContentView(R.layout.activity_eleccion);
 		colaSolicitud = Conexion.getInstance(getApplicationContext())
 				.getRequestQueue();
+		unPedido = getIntent().getExtras().getParcelable("elPedido");
+		String enviar = getIntent().getExtras().getString("enviar");
+		if (enviar != null) {
+			if (!(enviar.contains("invoke"))) {
+				Toast.makeText(getApplicationContext(), "No es Posible enviar",
+						Toast.LENGTH_LONG).show();
+				finish();
+			} else {
+				Toast.makeText(getApplicationContext(), "Productos enviados",
+						Toast.LENGTH_LONG).show();
+				realizarPeticionEleccion(enviar, null);
+			}
+
+		}
 		arregloElecciones = new ArrayList<Eleccion>();
 		arregloElecciones = getIntent().getExtras().getParcelableArrayList(
 				"listaElecciones");
@@ -51,7 +66,6 @@ public class EleccionActivity extends Activity {
 				arregloElecciones);
 		lstView = (ListView) findViewById(R.id.listEleccion);
 		lstView.setAdapter(eleccionAdapter);
-		unPedido = getIntent().getExtras().getParcelable("elPedido");
 		lstView.setOnItemClickListener(new OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
@@ -60,43 +74,47 @@ public class EleccionActivity extends Activity {
 				Eleccion unaEleccion = (Eleccion) parent.getAdapter().getItem(
 						position);
 				JSONObject postItem = itemToAdd(unaEleccion);
-				JsonObjectRequest jsonPost = new JsonObjectRequest(
-						Request.Method.POST, unaEleccion.getInvokeURL(),
-						postItem, new Response.Listener<JSONObject>() {
-
-							@Override
-							public void onResponse(JSONObject response) {
-								// TODO Auto-generated method stub
-								System.out.println("Entrooo");
-								parseJSON(response);								
-								Bundle bundle = new Bundle();
-								bundle.putParcelable("pedidoActualizado", unPedido);
-								Intent intentRegreso = new Intent();
-								intentRegreso.putExtras(bundle);
-								setResult(RESULT_OK, intentRegreso);
-								finish();
-							}
-						}, new Response.ErrorListener() {
-
-							@Override
-							public void onErrorResponse(VolleyError error) {
-								// TODO Auto-generated method stub
-
-							}
-						}) {
-
-					@Override
-					public Map<String, String> getHeaders()
-							throws AuthFailureError {
-						// TODO Auto-generated method stub
-						return Conexion.createBasicAuthHeader();
-					}
-				};
-				colaSolicitud.add(jsonPost);
+				realizarPeticionEleccion(unaEleccion.getInvokeURL(), postItem);
 			}
 
 		});
 
+	}
+
+	private void realizarPeticionEleccion(String urlPeticion,
+			JSONObject objectoPOST) {
+
+		JsonObjectRequest jsonPost = new JsonObjectRequest(Request.Method.POST,
+				urlPeticion, objectoPOST, new Response.Listener<JSONObject>() {
+
+					@Override
+					public void onResponse(JSONObject response) {
+						// TODO Auto-generated method stub
+						System.out.println("Entrooo");
+						parseJSON(response);
+						Bundle bundle = new Bundle();
+						bundle.putParcelable("pedidoActualizado", unPedido);
+						Intent intentRegreso = new Intent();
+						intentRegreso.putExtras(bundle);
+						setResult(RESULT_OK, intentRegreso);
+						finish();
+					}
+				}, new Response.ErrorListener() {
+
+					@Override
+					public void onErrorResponse(VolleyError error) {
+						// TODO Auto-generated method stub
+
+					}
+				}) {
+
+			@Override
+			public Map<String, String> getHeaders() throws AuthFailureError {
+				// TODO Auto-generated method stub
+				return Conexion.createBasicAuthHeader();
+			}
+		};
+		colaSolicitud.add(jsonPost);
 	}
 
 	private JSONObject itemToAdd(Eleccion unaEleccion) {
@@ -137,17 +155,18 @@ public class EleccionActivity extends Activity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
-	
+
 	private void parseJSON(JSONObject json) {
-		JSONObject members = null;			
+		JSONObject members = null;
 		arregloProductos = new ArrayList<Producto>();
-		try {			
-			// Con esto obtengo result donde en value tengo la lista d mesas
+		try {
 			members = json.getJSONObject("result").getJSONObject("members");
-			if (unPedido.getTitle().contains("Vac")){
-				unPedido.setTitle(json.getJSONObject("result").optString("title"));
+			if (unPedido.getTitle().contains("Vac")) {
+				unPedido.setTitle(json.getJSONObject("result").optString(
+						"title"));
 			}
-			// Con esto obtengo los title de las mesas
+			unPedido.setEstadocomanda(members.getJSONObject("comanda")
+					.getJSONObject("value").optString("title"));
 			JSONObject productosComanda = members
 					.getJSONObject("productosComanda");
 			JSONArray valueProductos = productosComanda.getJSONArray("value");
@@ -188,8 +207,9 @@ public class EleccionActivity extends Activity {
 				arregloProductos.add(unProducto);
 			}
 			unPedido.setListaProductos(arregloProductos);
-			if (unPedido.getListaProductos().isEmpty()){
-				unPedido.setTitle(json.getJSONObject("result").optString("title"));
+			if (unPedido.getListaProductos().isEmpty()) {
+				unPedido.setTitle(json.getJSONObject("result").optString(
+						"title"));
 			}
 
 		} catch (Exception e) {

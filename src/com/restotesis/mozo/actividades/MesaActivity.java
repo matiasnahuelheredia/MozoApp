@@ -54,7 +54,7 @@ public class MesaActivity extends Activity {
 					int position, long id) {
 				// TODO Auto-generated method stub
 				Mesa unaMesa = (Mesa) parent.getAdapter().getItem(position);
-				final int posicionMesa= position;
+				final int posicionMesa = position;
 				final ProgressDialog pd = ProgressDialog.show(
 						MesaActivity.this, "Aguarde por favor...",
 						"Aguarde por favor...");
@@ -67,10 +67,12 @@ public class MesaActivity extends Activity {
 								// TODO Auto-generated method stub
 								System.out.println("Entroooooooo");
 								arregloPedidos = new ArrayList<Pedido>();
-								parseJSON(response);								 
-								arregloMesas.get(posicionMesa).llenarLinks(response);
+								parseJSON(response);
+								arregloMesas.get(posicionMesa).llenarLinks(
+										response);
 								Bundle bundle = new Bundle();
-								bundle.putParcelable("unaMesa", arregloMesas.get(posicionMesa));
+								bundle.putParcelable("unaMesa",
+										arregloMesas.get(posicionMesa));
 								bundle.putParcelableArrayList("listaPedidos",
 										arregloPedidos);
 								Intent intent = new Intent(MesaActivity.this,
@@ -135,28 +137,64 @@ public class MesaActivity extends Activity {
 	private void parseJSON(JSONObject json) {
 		try {
 
-			JSONArray valuePedidos = json.getJSONObject("members").getJSONObject("pedidos").getJSONArray("value");
+			JSONArray valuePedidos = json.getJSONObject("members")
+					.getJSONObject("pedidos").getJSONArray("value");
 			for (int i = 0; i < valuePedidos.length(); i++) {
 				JSONObject pedido = valuePedidos.getJSONObject(i);
 				Pedido unPedido = new Pedido();
 				unPedido.setTitle(pedido.optString("title"));
 				unPedido.setUrlDetalle(pedido.optString("href"));
-				JSONObject members = pedido.getJSONObject("value").getJSONObject("members");								
-				unPedido.setUrlPedirBebidas(members.getJSONObject("pedirBebidas").getJSONArray("links").getJSONObject(0).optString("href"));
-				unPedido.setUrlEnviar(members.getJSONObject("enviar").getJSONArray("links").getJSONObject(0).optString("href"));
-				unPedido.setUrlPedirGuarniciones(members.getJSONObject("pedirGuarniciones").getJSONArray("links").getJSONObject(0).optString("href"));
-				unPedido.setUrlPedirPlatosEntrada(members.getJSONObject("pedirPlatosEntrada").getJSONArray("links").getJSONObject(0).optString("href"));
-				unPedido.setUrlPedirPlatosPrincipales(members.getJSONObject("pedirPlatosPrincipales").getJSONArray("links").getJSONObject(0).optString("href"));
-				unPedido.setUrlPedirPostres(members.getJSONObject("pedirPostres").getJSONArray("links").getJSONObject(0).optString("href"));
-				unPedido.setUrlPedirOferta(members.getJSONObject("pedirOfertas").getJSONArray("links").getJSONObject(0).optString("href"));
-				unPedido.setUrlRemoveFromBebidas(members.getJSONObject("removeFromBebidas").getJSONArray("links").getJSONObject(0).optString("href"));
-				unPedido.setUrlRemoveFromComanda(members.getJSONObject("removeFromComanda").getJSONArray("links").getJSONObject(0).optString("href"));
-				unPedido.setUrlRemoveFromMenues(members.getJSONObject("removeFromMenues").getJSONArray("links").getJSONObject(0).optString("href"));
-				unPedido.setUrlRemoveFromOferta(members.getJSONObject("removeFromOfertas").getJSONArray("links").getJSONObject(0).optString("href"));
-				unPedido.setUrlTomarMenues(members.getJSONObject("tomarMenues").getJSONArray("links").getJSONObject(0).optString("href"));
+				JSONObject members = pedido.getJSONObject("value")
+						.getJSONObject("members");
+				unPedido.setUrlPedirBebidas(members
+						.getJSONObject("pedirBebidas").getJSONArray("links")
+						.getJSONObject(0).optString("href"));
+				unPedido.setUrlEnviar(members.getJSONObject("enviar")
+						.getJSONArray("links").getJSONObject(0)
+						.optString("href"));
+				unPedido.setUrlPedirGuarniciones(members
+						.getJSONObject("pedirGuarniciones")
+						.getJSONArray("links").getJSONObject(0)
+						.optString("href"));
+				unPedido.setUrlPedirPlatosEntrada(members
+						.getJSONObject("pedirPlatosEntrada")
+						.getJSONArray("links").getJSONObject(0)
+						.optString("href"));
+				unPedido.setUrlPedirPlatosPrincipales(members
+						.getJSONObject("pedirPlatosPrincipales")
+						.getJSONArray("links").getJSONObject(0)
+						.optString("href"));
+				unPedido.setUrlPedirPostres(members
+						.getJSONObject("pedirPostres").getJSONArray("links")
+						.getJSONObject(0).optString("href"));
+				unPedido.setUrlPedirOferta(members
+						.getJSONObject("pedirOfertas").getJSONArray("links")
+						.getJSONObject(0).optString("href"));
+				unPedido.setUrlRemoveFromBebidas(members
+						.getJSONObject("removeFromBebidas")
+						.getJSONArray("links").getJSONObject(0)
+						.optString("href"));
+				unPedido.setUrlRemoveFromComanda(members
+						.getJSONObject("removeFromComanda")
+						.getJSONArray("links").getJSONObject(0)
+						.optString("href"));
+				unPedido.setUrlRemoveFromMenues(members
+						.getJSONObject("removeFromMenues")
+						.getJSONArray("links").getJSONObject(0)
+						.optString("href"));
+				unPedido.setUrlRemoveFromOferta(members
+						.getJSONObject("removeFromOfertas")
+						.getJSONArray("links").getJSONObject(0)
+						.optString("href"));
+				unPedido.setUrlTomarMenues(members.getJSONObject("tomarMenues")
+						.getJSONArray("links").getJSONObject(0)
+						.optString("href"));
+				unPedido.setEstadocomanda(members.getJSONObject("comanda")
+						.getJSONObject("value").optString("title"));
 				JSONObject productosComanda = members
 						.getJSONObject("productosComanda");
-				JSONArray valueProductos = productosComanda.getJSONArray("value");
+				JSONArray valueProductos = productosComanda
+						.getJSONArray("value");
 				for (int j = 0; j < valueProductos.length(); j++) {
 					JSONObject producto = valueProductos.getJSONObject(j);
 					Producto unProducto = new Producto();
@@ -175,7 +213,8 @@ public class MesaActivity extends Activity {
 					unPedido.getListaProductos().add(unProducto);
 				}
 
-				JSONObject menuesComanda = members.getJSONObject("menuesComanda");
+				JSONObject menuesComanda = members
+						.getJSONObject("menuesComanda");
 				JSONArray valueMenues = menuesComanda.getJSONArray("value");
 				for (int l = 0; l < valueMenues.length(); l++) {
 					JSONObject producto = valueMenues.getJSONObject(l);
@@ -184,7 +223,8 @@ public class MesaActivity extends Activity {
 					unProducto.setUrlDetalle(producto.optString("href"));
 					unPedido.getListaProductos().add(unProducto);
 				}
-				JSONObject ofertasComanda = members.getJSONObject("ofertasComanda");
+				JSONObject ofertasComanda = members
+						.getJSONObject("ofertasComanda");
 				JSONArray valueOfertas = ofertasComanda.getJSONArray("value");
 				for (int l = 0; l < valueOfertas.length(); l++) {
 					JSONObject producto = valueOfertas.getJSONObject(l);
@@ -194,7 +234,7 @@ public class MesaActivity extends Activity {
 					unPedido.getListaProductos().add(unProducto);
 				}
 				arregloPedidos.add(unPedido);
-			}			
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
