@@ -13,9 +13,9 @@
     <string name="menu_pedidos_tomarPedido">Agregar Pedido</string>
     <string name="menu_pedidos_Facturar">Facturar</string>
     <string name="title_activity_eleccion">Eleccion</string>   
-    <string name="menu_productos_enviar">Enviar</string>
-    <string name="menu_productos_eliminar">Eliminar</string>
-    <string name="menu_productos_Agregar">Agregar</string> 
+    <string name="menu_productos_enviar">Enviar Pedido</string>
+    <string name="menu_productos_eliminar">Eliminar Productos</string>
+    <string name="menu_productos_Agregar">Agregar Productos</string> 
      <string-array name="agregar_aProductos">
         <item>Agregar Bebidas</item>
         <item>Agregar Ofertas</item>
