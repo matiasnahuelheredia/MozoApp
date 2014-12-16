@@ -38,6 +38,10 @@
             android:name=".actividades.EleccionActivity"
             android:label="@string/title_activity_eleccion" >
         </activity>
+        <activity
+            android:name="com.restotesis.mozo.actividades.RemoverPedidoActivity"
+            android:label="@string/title_activity_remover_pedido" >
+        </activity>
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" >

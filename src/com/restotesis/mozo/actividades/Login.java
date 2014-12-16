@@ -27,7 +27,7 @@ import android.widget.Toast;
 
 public class Login extends Activity {
 
-	private String url = ":8080/resto-webapp/restful/services/dom.mesa.MesaServicio/actions/listarMesasAsignadas/invoke";
+	private String url = "/restful/services/dom.mesa.MesaServicio/actions/listarMesasAsignadas/invoke";
 	private EditText txtIpserver;
 	private EditText txtUsuario;
 	private EditText txtPassword;

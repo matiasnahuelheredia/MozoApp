@@ -239,9 +239,9 @@ public class ProductosActivity extends Activity {
 				item = parameters.getJSONObject("postre1");
 				tipo = "postre1";
 			}
-			if (temp.toString().contains("guarnición1")) {
-				item = parameters.getJSONObject("guarnición1");
-				tipo = "guarnición1";
+			if (temp.toString().contains("guarnicion1")) {
+				item = parameters.getJSONObject("guarnicion1");
+				tipo = "guarnicion1";
 			}
 			if (temp.toString().contains("menu1")) {
 				item = parameters.getJSONObject("menu1");

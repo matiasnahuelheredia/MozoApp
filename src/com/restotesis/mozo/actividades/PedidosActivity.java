@@ -17,7 +17,6 @@ import com.restotesis.mozo.networking.Conexion;
 import com.restotesis.mozo.representacion.Mesa;
 import com.restotesis.mozo.representacion.Pedido;
 import com.restotesis.mozo.representacion.Producto;
-
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -33,9 +32,11 @@ public class PedidosActivity extends Activity {
 
 	private ListView lstView;
 	private ArrayList<Pedido> arregloPedidos;
+	private Mesa unaMesa;
 	private PedidoAdapter adaptadorPedidos;
 	private RequestQueue colaSolicitud;
 	private static final int PEDIDO_MODIFICADO = 1;
+	private static final int PEDIDO_MODIFICADO_ELIMINADO = 5;
 	private static final int PEDIDO = 3;
 
 	@Override
@@ -44,6 +45,8 @@ public class PedidosActivity extends Activity {
 		setContentView(R.layout.activity_pedidos);
 		colaSolicitud = Conexion.getInstance(getApplicationContext())
 				.getRequestQueue();
+		unaMesa = new Mesa();
+		unaMesa = getIntent().getExtras().getParcelable("unaMesa");
 		arregloPedidos = new ArrayList<Pedido>();
 		arregloPedidos = getIntent().getExtras().getParcelableArrayList(
 				"listaPedidos");
@@ -221,6 +224,49 @@ public class PedidosActivity extends Activity {
 
 			return true;
 		}
+		if (id == R.id.borrarPedido) {
+			JsonObjectRequest solcitudRemoverPedido = new JsonObjectRequest(Request.Method.GET, unaMesa.getBorrarPedidoURL(),
+					null, 
+					new Response.Listener<JSONObject>() {
+
+						@Override
+						public void onResponse(JSONObject response) {
+							// TODO Auto-generated method stub
+							String urlInvoke = null;
+							try {
+								urlInvoke = response.getJSONArray("links").getJSONObject(2).optString("href");
+							} catch (JSONException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+							Bundle bundle = new Bundle();
+							bundle.putString("urlInvoke", urlInvoke);
+							bundle.putParcelableArrayList("listaPedidos", arregloPedidos);
+							Intent intent = new Intent(getApplicationContext(),
+									RemoverPedidoActivity.class);
+							intent.putExtras(bundle);
+							startActivityForResult(intent, PEDIDO);
+							
+						}
+					}, new Response.ErrorListener() {
+
+						@Override
+						public void onErrorResponse(VolleyError error) {
+							// TODO Auto-generated method stub
+							
+						}
+					}){
+
+						@Override
+						public Map<String, String> getHeaders()
+								throws AuthFailureError {
+							// TODO Auto-generated method stub
+							return Conexion.createBasicAuthHeader();
+						}
+				
+			};
+			colaSolicitud.add(solcitudRemoverPedido);			
+		}
 		return super.onOptionsItemSelected(item);
 	}
 
@@ -339,6 +385,13 @@ public class PedidosActivity extends Activity {
 			Pedido nuevoPedido = data.getExtras().getParcelable(
 					"pedidoActualizado");
 			arregloPedidos.set(posicion, nuevoPedido);
+			adaptadorPedidos.actualizar(arregloPedidos);
+			adaptadorPedidos.notifyDataSetChanged();
+		}
+		if (resultCode == PEDIDO_MODIFICADO_ELIMINADO) {
+			
+			arregloPedidos = new ArrayList<Pedido>();
+			arregloPedidos = data.getExtras().getParcelableArrayList("arregloPedidos");
 			adaptadorPedidos.actualizar(arregloPedidos);
 			adaptadorPedidos.notifyDataSetChanged();
 		}
