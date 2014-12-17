@@ -7,7 +7,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class Factura implements Parcelable {
-	
+
 	private String title;
 	private int numero;
 	private List<Producto> items = new ArrayList<Producto>();
@@ -22,7 +22,7 @@ public class Factura implements Parcelable {
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public String getTitle() {
@@ -56,7 +56,5 @@ public class Factura implements Parcelable {
 	public void setTotal(double total) {
 		this.total = total;
 	}
-
-	
 
 }

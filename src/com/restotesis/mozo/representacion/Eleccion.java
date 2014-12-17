@@ -3,15 +3,14 @@ package com.restotesis.mozo.representacion;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class Eleccion implements Parcelable{
+public class Eleccion implements Parcelable {
 	private String title;
 	private String url;
 	private int cantidad;
 	private String nota;
 	private String tipo;
 	private String invokeURL;
-	
-	
+
 	public Eleccion() {
 
 	}
@@ -36,36 +35,45 @@ public class Eleccion implements Parcelable{
 			return new Eleccion[size];
 		}
 	};
-	
+
 	public String getTitle() {
 		return title;
 	}
+
 	public void setTitle(String title) {
 		this.title = title;
 	}
+
 	public String getUrl() {
 		return url;
 	}
+
 	public void setUrl(String url) {
 		this.url = url;
 	}
+
 	public int getCantidad() {
 		return cantidad;
 	}
+
 	public void setCantidad(int cantidad) {
 		this.cantidad = cantidad;
 	}
+
 	public String getNota() {
 		return nota;
 	}
+
 	public void setNota(String nota) {
 		this.nota = nota;
 	}
+
 	@Override
 	public int describeContents() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
+
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
 		// TODO Auto-generated method stub

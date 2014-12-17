@@ -30,8 +30,6 @@ public class Producto implements Parcelable {
 			return new Producto[size];
 		}
 	};
-	
-	
 
 	@Override
 	public int describeContents() {
@@ -45,7 +43,6 @@ public class Producto implements Parcelable {
 		dest.writeString(title);
 		dest.writeInt(cantidad);
 		dest.writeString(urlDetalle);
-		
 
 	}
 

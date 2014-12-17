@@ -39,8 +39,12 @@
             android:label="@string/title_activity_eleccion" >
         </activity>
         <activity
-            android:name="com.restotesis.mozo.actividades.RemoverPedidoActivity"
+            android:name=".actividades.RemoverPedidoActivity"
             android:label="@string/title_activity_remover_pedido" >
+        </activity>
+        <activity
+            android:name="com.restotesis.mozo.ajustes.AjusteActivity"
+            android:label="@string/title_activity_ajuste" >
         </activity>
     </application>
 

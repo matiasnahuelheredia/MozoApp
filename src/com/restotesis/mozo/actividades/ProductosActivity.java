@@ -38,7 +38,6 @@ public class ProductosActivity extends Activity {
 	private Pedido unPedido;
 	private RequestQueue colaSolicitud;
 	private int PEDIDO_MODIFICADO = 1;
-	private int PEDIDO_SINMODIFICAION = 0;
 	private String enviar = null;
 	private DrawerLayout mDrawer;
 	private ListView mDrawerOptions;
@@ -59,9 +58,6 @@ public class ProductosActivity extends Activity {
 				arregloProductos);
 		lstView = (ListView) findViewById(R.id.listProductos);
 		lstView.setAdapter(adaptadorProductos);
-		/* Probando Drawer Navigation */
-		getActionBar().setDisplayHomeAsUpEnabled(true);
-		getActionBar().setHomeButtonEnabled(true);
 		agregar = getResources().getStringArray(R.array.agregar_aProductos);
 		eliminar = getResources().getStringArray(R.array.eliminar_deProductos);
 		mDrawerOptions = (ListView) findViewById(R.id.left_drawer);
@@ -148,7 +144,6 @@ public class ProductosActivity extends Activity {
 				mDrawer.closeDrawers();
 			}
 		});
-		/* Fin Drawer Navigation */
 	}
 
 	@Override

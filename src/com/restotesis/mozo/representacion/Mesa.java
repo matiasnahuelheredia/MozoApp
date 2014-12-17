@@ -7,7 +7,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class Mesa implements Parcelable {
-	
+
 	private String title;
 	private String urlDetalle;
 	private String facturarURL;
@@ -38,11 +38,11 @@ public class Mesa implements Parcelable {
 		}
 	};
 
-	public void llenarLinks(JSONObject jsonResult){		
+	public void llenarLinks(JSONObject jsonResult) {
 		try {
 			JSONObject members = jsonResult.getJSONObject("members");
 			JSONObject facturar = members.getJSONObject("facturar");
-			JSONArray links = facturar.getJSONArray("links");	
+			JSONArray links = facturar.getJSONArray("links");
 			this.setFacturarURL(links.getJSONObject(0).getString("href"));
 			JSONObject tomarPedido = members.getJSONObject("tomarPedido");
 			links = tomarPedido.getJSONArray("links");
@@ -71,7 +71,6 @@ public class Mesa implements Parcelable {
 	public void setUrlDetalle(String urlDetalle) {
 		this.urlDetalle = urlDetalle;
 	}
-	
 
 	public String getFacturarURL() {
 		return facturarURL;

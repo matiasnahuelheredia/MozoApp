@@ -14,6 +14,7 @@ public class Conexion {
 	private RequestQueue mRequestQueue;
 	private static String user;
 	private static String password;
+	private static String url;
 
 	private Conexion(Context context) {
 		mRequestQueue = Volley.newRequestQueue(context);
@@ -56,6 +57,14 @@ public class Conexion {
 				+ encodedCredentials);
 		System.out.println(headerMap.toString());
 		return headerMap;
+	}
+
+	public static String getUrl() {
+		return url;
+	}
+
+	public static void setUrl(String url) {
+		Conexion.url = url;
 	}
 
 }

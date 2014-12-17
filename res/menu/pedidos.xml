@@ -2,11 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.example.volleytesting.Pedidos" >
 
-    <item
-        android:id="@+id/action_settings"
-        android:orderInCategory="100"
-        android:showAsAction="never"
-        android:title="@string/action_settings"/>
+   
     <item
         android:id="@+id/borrarPedido"
         android:orderInCategory="100"
@@ -20,10 +16,6 @@
         android:icon="@drawable/ic_action_addpedido"
         android:title="@string/menu_pedidos_tomarPedido"/>
     
-    <item
-        android:id="@+id/facturarMesa"
-        android:orderInCategory="100"
-        android:showAsAction="never"
-        android:title="@string/menu_pedidos_Facturar"/>
+   
 
 </menu>

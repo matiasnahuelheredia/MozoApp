@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <PreferenceCategory android:title="Red" >
+        <EditTextPreference
+            android:defaultValue="http://"
+            android:dialogTitle="Introduzca valor"
+            android:key="urlIP"
+            android:summary="Direccion Ip / URL"
+            android:title="Direccion" />
+        <EditTextPreference
+            android:defaultValue="80"
+            android:dialogTitle="Introduzca valor"
+            android:key="puerto"
+            android:summary="Puerto de Escucha de la Aplicacion"
+            android:title="Puerto" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

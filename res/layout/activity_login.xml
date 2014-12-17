@@ -9,24 +9,6 @@
     tools:context="actividades.Login" >
 
     <TextView
-        android:id="@+id/txtUsuario"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="125dp"
-        android:text="Usuario" />
-
-    <TextView
-        android:id="@+id/txtIpServer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="28dp"
-        android:text="Ip Server :" />
-
-    <TextView
         android:id="@+id/txtPassword"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -34,18 +16,6 @@
         android:layout_below="@+id/txtUsuario"
         android:layout_marginTop="32dp"
         android:text="Contraseña" />
-
-    <EditText
-        android:id="@+id/etxtIpServer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/txtIpServer"
-        android:layout_toRightOf="@+id/txtIpServer"
-        android:ems="10"
-        android:text="http://" >
-
-        <requestFocus />
-    </EditText>
 
     <EditText
         android:id="@+id/etxtPassword"
@@ -72,5 +42,14 @@
         android:layout_alignRight="@+id/etxtPassword"
         android:layout_alignTop="@+id/txtUsuario"
         android:ems="10" />
+
+    <TextView
+        android:id="@+id/txtUsuario"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/txtPassword"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="75dp"
+        android:text="Usuario" />
 
 </RelativeLayout>

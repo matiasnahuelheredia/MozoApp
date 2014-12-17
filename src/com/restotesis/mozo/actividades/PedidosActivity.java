@@ -225,8 +225,8 @@ public class PedidosActivity extends Activity {
 			return true;
 		}
 		if (id == R.id.borrarPedido) {
-			JsonObjectRequest solcitudRemoverPedido = new JsonObjectRequest(Request.Method.GET, unaMesa.getBorrarPedidoURL(),
-					null, 
+			JsonObjectRequest solcitudRemoverPedido = new JsonObjectRequest(
+					Request.Method.GET, unaMesa.getBorrarPedidoURL(), null,
 					new Response.Listener<JSONObject>() {
 
 						@Override
@@ -234,38 +234,39 @@ public class PedidosActivity extends Activity {
 							// TODO Auto-generated method stub
 							String urlInvoke = null;
 							try {
-								urlInvoke = response.getJSONArray("links").getJSONObject(2).optString("href");
+								urlInvoke = response.getJSONArray("links")
+										.getJSONObject(2).optString("href");
 							} catch (JSONException e) {
 								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
 							Bundle bundle = new Bundle();
 							bundle.putString("urlInvoke", urlInvoke);
-							bundle.putParcelableArrayList("listaPedidos", arregloPedidos);
+							bundle.putParcelableArrayList("listaPedidos",
+									arregloPedidos);
 							Intent intent = new Intent(getApplicationContext(),
 									RemoverPedidoActivity.class);
 							intent.putExtras(bundle);
 							startActivityForResult(intent, PEDIDO);
-							
+
 						}
 					}, new Response.ErrorListener() {
 
 						@Override
 						public void onErrorResponse(VolleyError error) {
 							// TODO Auto-generated method stub
-							
-						}
-					}){
 
-						@Override
-						public Map<String, String> getHeaders()
-								throws AuthFailureError {
-							// TODO Auto-generated method stub
-							return Conexion.createBasicAuthHeader();
 						}
-				
+					}) {
+
+				@Override
+				public Map<String, String> getHeaders() throws AuthFailureError {
+					// TODO Auto-generated method stub
+					return Conexion.createBasicAuthHeader();
+				}
+
 			};
-			colaSolicitud.add(solcitudRemoverPedido);			
+			colaSolicitud.add(solcitudRemoverPedido);
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -389,9 +390,10 @@ public class PedidosActivity extends Activity {
 			adaptadorPedidos.notifyDataSetChanged();
 		}
 		if (resultCode == PEDIDO_MODIFICADO_ELIMINADO) {
-			
+
 			arregloPedidos = new ArrayList<Pedido>();
-			arregloPedidos = data.getExtras().getParcelableArrayList("arregloPedidos");
+			arregloPedidos = data.getExtras().getParcelableArrayList(
+					"arregloPedidos");
 			adaptadorPedidos.actualizar(arregloPedidos);
 			adaptadorPedidos.notifyDataSetChanged();
 		}

@@ -32,7 +32,7 @@ public class RemoverPedidoActivity extends Activity {
 
 	private RequestQueue colaSolicitud;
 	private ArrayList<Pedido> arregloPedidos;
-	private Pedido unPedido;	
+	private Pedido unPedido;
 	private PedidoAdapter eleccionAdapter;
 	private ListView lstView;
 	private String urlInvokeBorrarPedido;
@@ -62,8 +62,8 @@ public class RemoverPedidoActivity extends Activity {
 				if (unPedido.getTitle().contains("Vacio")) {
 					JSONObject item = itemToJSON(unPedido);
 					JsonObjectRequest postRemovePedido = new JsonObjectRequest(
-							Request.Method.POST, urlInvokeBorrarPedido,
-							item, new Response.Listener<JSONObject>() {
+							Request.Method.POST, urlInvokeBorrarPedido, item,
+							new Response.Listener<JSONObject>() {
 
 								@Override
 								public void onResponse(JSONObject response) {
@@ -86,15 +86,15 @@ public class RemoverPedidoActivity extends Activity {
 									// TODO Auto-generated method stub
 
 								}
-							}){
+							}) {
 
-								@Override
-								public Map<String, String> getHeaders()
-										throws AuthFailureError {
-									// TODO Auto-generated method stub
-									return Conexion.createBasicAuthHeader();
-								}
-						
+						@Override
+						public Map<String, String> getHeaders()
+								throws AuthFailureError {
+							// TODO Auto-generated method stub
+							return Conexion.createBasicAuthHeader();
+						}
+
 					};
 					colaSolicitud.add(postRemovePedido);
 
@@ -132,8 +132,9 @@ public class RemoverPedidoActivity extends Activity {
 	private void actualizarArregloPedidos(JSONObject json) {
 		try {
 			arregloPedidos = new ArrayList<Pedido>();
-			JSONArray valuePedidos = json.getJSONObject("result").getJSONObject("members")
-					.getJSONObject("pedidos").getJSONArray("value");
+			JSONArray valuePedidos = json.getJSONObject("result")
+					.getJSONObject("members").getJSONObject("pedidos")
+					.getJSONArray("value");
 			for (int i = 0; i < valuePedidos.length(); i++) {
 				JSONObject pedido = valuePedidos.getJSONObject(i);
 				Pedido unPedido = new Pedido();
