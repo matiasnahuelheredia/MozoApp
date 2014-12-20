@@ -2,6 +2,7 @@
 <resources>
 
     <string name="app_name">Cliente Mozo</string>
+    <string name="detailsEleccion">OK</string>
     <string name="activity_login_text_user">Usuario</string>
     <string name="activity_login_text_password">Contraseña</string>
     <string name="action_settings">Ajustes</string>
@@ -35,6 +36,8 @@
     </string-array>
 
     <string name="title_activity_remover_pedido">Seleccionar Pedido</string>
-    <string name="title_activity_ajuste">Ajustes</string>    
+    <string name="title_activity_ajuste">Ajustes</string>
+    <string name="title_activity_detalle">DetalleActivity</string>
+    <string name="hello_world">Hello world!</string>
 
 </resources>

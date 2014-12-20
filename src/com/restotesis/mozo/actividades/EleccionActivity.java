@@ -73,8 +73,11 @@ public class EleccionActivity extends Activity {
 				// TODO Auto-generated method stub
 				Eleccion unaEleccion = (Eleccion) parent.getAdapter().getItem(
 						position);
-				JSONObject postItem = itemToAdd(unaEleccion);
-				realizarPeticionEleccion(unaEleccion.getInvokeURL(), postItem);
+				Bundle bundle = new Bundle();
+				bundle.putParcelable("suEleccion", unaEleccion);
+				Intent intentEleccion = new Intent(EleccionActivity.this, DetalleActivity.class);
+				intentEleccion.putExtras(bundle);
+				startActivityForResult(intentEleccion, 0);
 			}
 
 		});
@@ -127,6 +130,15 @@ public class EleccionActivity extends Activity {
 			value.put("value", href);
 			item = new JSONObject();
 			item.put(unaEleccion.getTipo(), value);
+			
+			JSONObject valueCantidad = new JSONObject();
+			valueCantidad.put("value", unaEleccion.getCantidad());
+			item.put("cantidad", valueCantidad);
+			
+			JSONObject valueNota = new JSONObject();
+			valueNota.put("value", unaEleccion.getNota());			
+			item.put("nota", valueNota);
+			
 			System.out.println(item.toString());
 			return item;
 		} catch (JSONException e) {
@@ -217,4 +229,16 @@ public class EleccionActivity extends Activity {
 		}
 	}
 
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		// TODO Auto-generated method stub
+		
+		if (resultCode==RESULT_OK){
+			Eleccion suEleccion = data.getExtras().getParcelable("suEleccion");
+			JSONObject postItem = itemToAdd(suEleccion);
+			realizarPeticionEleccion(suEleccion.getInvokeURL(), postItem);				
+		}
+		super.onActivityResult(requestCode, resultCode, data);
+	}
+	
 }

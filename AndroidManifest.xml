@@ -43,8 +43,12 @@
             android:label="@string/title_activity_remover_pedido" >
         </activity>
         <activity
-            android:name="com.restotesis.mozo.ajustes.AjusteActivity"
+            android:name=".ajustes.AjusteActivity"
             android:label="@string/title_activity_ajuste" >
+        </activity>
+        <activity
+            android:name="com.restotesis.mozo.actividades.DetalleActivity"
+            android:label="@string/title_activity_detalle" >
         </activity>
     </application>
 
