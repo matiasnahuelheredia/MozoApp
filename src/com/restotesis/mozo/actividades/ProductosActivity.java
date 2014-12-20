@@ -39,6 +39,7 @@ public class ProductosActivity extends Activity {
 	private RequestQueue colaSolicitud;
 	private int PEDIDO_MODIFICADO = 1;
 	private String enviar = null;
+	private String accionEliminar = null;
 	private DrawerLayout mDrawer;
 	private ListView mDrawerOptions;
 	private String[] agregar;
@@ -318,8 +319,11 @@ public class ProductosActivity extends Activity {
 					@Override
 					public void onResponse(JSONObject response) {
 						// TODO Auto-generated method stub
+						Bundle bundle = new Bundle();
 						if (tipo.contains("Eliminar")) {
 							parseJSONRemoveChoices(response);
+							accionEliminar = "eliminar";
+							bundle.putString("accionEliminar", accionEliminar);
 						}
 						if (tipo.contains("Agregar")) {
 							parseJSONChoices(response);
@@ -338,7 +342,7 @@ public class ProductosActivity extends Activity {
 							 */
 							codigoSolicitud = 1;
 						}
-						Bundle bundle = new Bundle();
+						
 						bundle.putParcelableArrayList("listaElecciones",
 								arregloElecciones);
 						bundle.putParcelable("elPedido", unPedido);
